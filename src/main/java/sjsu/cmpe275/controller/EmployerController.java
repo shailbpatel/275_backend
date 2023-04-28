@@ -37,6 +37,7 @@ public class EmployerController {
      * @throws ResponseStatusException if there was an error creating the employer
      */
 
+    @CrossOrigin
     @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Employer> createEmployer(
             @RequestParam(required = true) String name,
@@ -45,9 +46,13 @@ public class EmployerController {
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String state,
             @RequestParam(required = false) String zip,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String capacity,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String password,
             @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
 
-        Employer newEmployer = employerService.createEmployer(name, description, street, city, state, zip);
+        Employer newEmployer = employerService.createEmployer(name, description , street, city, password, state, zip, capacity, email, role);
 
         if (newEmployer == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -102,10 +107,14 @@ public class EmployerController {
                                                    @RequestParam(required = false) String city,
                                                    @RequestParam(required = false) String state,
                                                    @RequestParam(required = false) String zip,
+                                                   @RequestParam(required = false) String email,
+                                                   @RequestParam(required = false) String capacity,
+                                                   @RequestParam(required = false) String role,
+                                                   @RequestParam(required = false) String password,
                                                    @RequestParam(required = false) String format) {
 
         try {
-            Employer employer = employerService.updateEmployer(employerId, name, description, street, city, state, zip);
+            Employer employer = employerService.updateEmployer(employerId, name, description, street, city, state, zip, capacity, email, role, password);
             if (format != null && format.equals("xml")) {
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employer);
             } else {

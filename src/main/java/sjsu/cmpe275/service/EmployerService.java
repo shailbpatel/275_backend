@@ -31,21 +31,41 @@ public class EmployerService {
      * @param city        the city of the Employer's location
      * @param state       the state of the Employer's location
      * @param zip         the zip code of the Employer's location
+     * @param capacity
+     * @param email
+     * @param role
+     * @param
      * @return the created Employer, or null if an Employer with the same name already exists in the database
      */
     @Transactional
-    public Employer createEmployer(String name, String description, String street, String city, String state, String zip) {
+    public Employer createEmployer(String name, String description, String street, String city, String zip, String state,   String password,String capacity, String email, String role) {
         if (employerRepository.findByName(name) != null) {
             return null;
         }
         Employer employer = new Employer();
-        employer.setName(name);
-        employer.setDescription(description);
         Address address = new Address(street, city, state, zip);
         employer.setAddress(address);
+        employer.setName(name);
+        employer.setDescription(description);
+        employer.setCapacity(capacity);
+        employer.setEmail(email);
+        employer.setRole(role);
+        employer.setPassword(password);
+        System.out.println("Email :" + email);
+        System.out.println("Name :" + name);
+        System.out.println("capacity :" + capacity);
+        System.out.println("role :" + role);
+        System.out.println("password :" + password);
+
+
+
+
+
+
         // Set the Employees of the new Employer to an empty ArrayList
         employer.setEmployees(new ArrayList<Employee>());
         Employer savedEmployer = employerRepository.save(employer);
+        System.out.println(savedEmployer);
         entityManager.flush();
         return savedEmployer;
     }
@@ -80,10 +100,12 @@ public class EmployerService {
      * @param city        the new city for the Employer's location (null to keep the existing address)
      * @param state       the new state for the Employer's location (null to keep the existing address)
      * @param zip         the new zip code for the Employer's location (null to keep the existing address)
+     * @param role
+     * @param password
      * @return the updated Employer
      */
     @Transactional
-    public Employer updateEmployer(long employerId, String name, String description, String street, String city, String state, String zip) throws Exception {
+    public Employer updateEmployer(long employerId, String name, String description, String street, String city, String state, String zip, String capacity, String email, String role, String password) throws Exception {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
             throw new Exception("Employer does not exist!");

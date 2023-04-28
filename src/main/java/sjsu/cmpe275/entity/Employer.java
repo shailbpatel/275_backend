@@ -22,17 +22,49 @@ public class Employer {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "email" , unique = true)
+    private String email;
+    @Column(name = "capacity")
+    private String capacity;
+
+    @Column(name = "role")
+    private String role;
+
+
+    @Column(name = "password")
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Embedded
     private Address address;
 
     @Transient
     private List<Employee> employees;
 
-    public Employer(String name, String description, Address address, List<Employee> employees) {
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Employer(String name, String description, Address address, String capacity, String email, String role, String password, List<Employee> employees) {
         this.name = name;
         this.description = description;
         this.address = address;
+        this.capacity = capacity;
+        this.email = email;
+        this.role = role;
+        this.password = password;
         this.employees = employees;
+
     }
 
     public Employer() {
@@ -63,6 +95,26 @@ public class Employer {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    @XmlElement(name = "capacity")
+
+    public String getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
+    }
+
+    @XmlElement(name = "email")
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @XmlElement(name = "description")
