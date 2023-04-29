@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>sjsu.cmpe275</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>lab2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Lab2</name>
 	<description>Demo project for Spring Boot</description>

@@ -11,6 +11,18 @@ public class CollaboratorService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    /**
+     * Adds two employees as collaborators. This method first checks if the given employee IDs are valid and belong to the
+     *      corresponding employer IDs. It then checks if the two employees are already collaborators. If they are, it returns
+     *      true without making any changes. Otherwise, it adds each employee to the other's collaborators list and saves the
+     *      changes to the database.
+     *      @param employerId1 the ID of the employer of the first employee
+     *      @param employeeId1 the ID of the first employee
+     *      @param employerId2 the ID of the employer of the second employee
+     *      @param employeeId2 the ID of the second employee
+     *      @return true if the employees were successfully added as collaborators, false otherwise
+     *      @throws IllegalArgumentException if employee1 is the same as employee2
+     */
     public Boolean addCollaborator(long employerId1, long employeeId1, long employerId2, long employeeId2) {
         if (employerId1 == employerId2 && employeeId1 == employeeId2) {
             throw new IllegalArgumentException("Cannot add an employee as a collaborator of himself/herself.");
@@ -34,6 +46,16 @@ public class CollaboratorService {
         return true;
     }
 
+
+    /**
+     * Deletes the collaboration between two employees from different employers.
+     * @param employerId1 the ID of the first employer
+     * @param employeeId1 the ID of the first employee
+     * @param employerId2 the ID of the second employer
+     * @param employeeId2 the ID of the second employee
+     * @return true if the collaboration was deleted successfully, false if either employee could not be found
+     * @throws Exception if the two employees are the same or if the collaboration does not exist
+     */
     public Boolean deleteCollaborator(long employerId1, long employeeId1, long employerId2, long employeeId2) throws Exception {
         if (employerId1 == employerId2 && employeeId1 == employeeId2) {
             throw new Exception("Cannot remove an employee as a collaborator of himself/herself.");
