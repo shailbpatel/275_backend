@@ -1,5 +1,7 @@
 package sjsu.cmpe275.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,11 +11,11 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name = "employer")
 @XmlRootElement(name = "employer")
+@JsonSerialize(using = FullEmployerSerializer.class)
 public class Employer {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private String id;
 
     @Column(name = "name", nullable = false, unique = true)
     @NotBlank( message = "Name may not be empty or full of white spaces")
@@ -22,60 +24,29 @@ public class Employer {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "email" , unique = true)
-    private String email;
-    @Column(name = "capacity")
-    private String capacity;
-
-    @Column(name = "role")
-    private String role;
-
-
-    @Column(name = "password")
-    private String password;
-
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Embedded
     private Address address;
 
     @Transient
     private List<Employee> employees;
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Employer(String name, String description, Address address, String capacity, String email, String role, String password, List<Employee> employees) {
+    public Employer(String id, String name, String description, Address address, List<Employee> employees) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.address = address;
-        this.capacity = capacity;
-        this.email = email;
-        this.role = role;
-        this.password = password;
         this.employees = employees;
-
     }
 
     public Employer() {
     }
 
     @XmlElement(name = "id")
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -95,26 +66,6 @@ public class Employer {
 
     public void setAddress(Address address) {
         this.address = address;
-    }
-
-    @XmlElement(name = "capacity")
-
-    public String getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(String capacity) {
-        this.capacity = capacity;
-    }
-
-    @XmlElement(name = "email")
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @XmlElement(name = "description")

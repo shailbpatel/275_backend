@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import sjsu.cmpe275.service.CollaboratorService;
+import sjsu.cmpe275.service.ErrorResponse;
 
 @RestController
 @RequestMapping(value = "/collaborators")
@@ -24,20 +26,23 @@ public class CollaboratorController {
      * @throws Exception if there is an error while adding the collaborator
      */
     @PutMapping("/{employerId1}/{employeeId1}/{employerId2}/{employeeId2}")
-    public ResponseEntity<String> addCollaborator(
-            @PathVariable("employerId1") long employerId1,
+    public ResponseEntity<?> addCollaborator(
+            @PathVariable("employerId1") String employerId1,
             @PathVariable("employeeId1") long employeeId1,
-            @PathVariable("employerId2") long employerId2,
-            @PathVariable("employeeId2") long employeeId2) throws Exception {
+            @PathVariable("employerId2") String employerId2,
+            @PathVariable("employeeId2") long employeeId2) {
 
         try {
             Boolean success = collaboratorService.addCollaborator(employerId1, employeeId1, employerId2, employeeId2);
-            if (!success) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collaboration already exists!");
-
             return ResponseEntity.ok().body("Collaborator added successfully.");
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+        }
+        catch (ResponseStatusException ex) {
+            ErrorResponse response = new ErrorResponse(ex.getStatus().value(), ex.getReason());
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
     }
 
@@ -54,10 +59,10 @@ public class CollaboratorController {
 
     @DeleteMapping("/{employerId1}/{employeeId1}/{employerId2}/{employeeId2}")
     public ResponseEntity<String> deleteCollaborator(
-            @PathVariable("employerId1") long employerId1,
+            @PathVariable("employerId1") String employerId1,
             @PathVariable("employeeId1") long employeeId1,
-            @PathVariable("employerId2") long employerId2,
-            @PathVariable("employeeId2") long employeeId2) throws Exception {
+            @PathVariable("employerId2") String employerId2,
+            @PathVariable("employeeId2") long employeeId2) {
 
         try {
             Boolean success = collaboratorService.deleteCollaborator(employerId1, employeeId1, employerId2, employeeId2);

@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public class EmployeeId implements Serializable {
     private long id;
-    private long employerId;
+    private String employerId;
 
     public EmployeeId() {
     }
 
-    public EmployeeId(long id, long employerId) {
+    public EmployeeId(long id, String employerId) {
         this.id = id;
         this.employerId = employerId;
     }
@@ -19,7 +19,7 @@ public class EmployeeId implements Serializable {
         return id;
     }
 
-    public long getEmployerId() {
+    public String getEmployerId() {
         return employerId;
     }
 

@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface EmployerRepository extends CrudRepository<Employer, Long> {
     Employer findByName(String name);
 
-    Employer findById(long id);
+
+    Employer findById(String id);
 }

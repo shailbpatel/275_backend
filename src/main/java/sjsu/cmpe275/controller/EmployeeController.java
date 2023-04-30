@@ -5,14 +5,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import sjsu.cmpe275.service.EmployeeService;
 import sjsu.cmpe275.entity.Employee;
+import sjsu.cmpe275.service.ErrorResponse;
 
 @RestController
-@Transactional
+//@Transactional
 @RequestMapping("/employee")
 public class EmployeeController {
     @Autowired
@@ -37,7 +37,7 @@ public class EmployeeController {
      * @throws ResponseStatusException if there is an error while creating the employee
      */
     @PostMapping(value = "/create/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<Employee> createEmployee(
+    public ResponseEntity<?> createEmployee(
             @RequestParam("name") String name,
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "title", required = false) String title,
@@ -46,39 +46,27 @@ public class EmployeeController {
             @RequestParam(value = "state", required = false) String state,
             @RequestParam(value = "zip", required = false) String zip,
             @RequestParam(value = "managerId", required = false) Long managerId,
-            @PathVariable("employerId") long employerId,
-            @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
+            @PathVariable("employerId") String employerId,
+            @RequestParam(value = "format", defaultValue = "json") String format) {
 
-        Employee newEmployee = employeeService.createEmployee(name, email, title, street, city, state, zip, managerId, employerId);
+        try {
+            Employee newEmployee = employeeService.createEmployee(name, email, title, street, city, state, zip, managerId, employerId);
 
-        if (newEmployee == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            HttpHeaders headers = new HttpHeaders();
+            if ("json".equalsIgnoreCase(format)) {
+                headers.setContentType(MediaType.APPLICATION_JSON);
+            }
+            if ("xml".equalsIgnoreCase(format)) {
+                headers.setContentType(MediaType.APPLICATION_XML);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(newEmployee);
+
+        } catch (ResponseStatusException ex) {
+            ErrorResponse response = new ErrorResponse(ex.getStatus().value(), ex.getReason());
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+        } catch (Exception ex) {
+            ErrorResponse response = new ErrorResponse(400, ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
-
-        HttpHeaders headers = new HttpHeaders();
-        if ("json".equalsIgnoreCase(format)) {
-            headers.setContentType(MediaType.APPLICATION_JSON);
-        } else if ("xml".equalsIgnoreCase(format)) {
-            headers.setContentType(MediaType.APPLICATION_XML);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(newEmployee);
-    }
-
-    /**
-     * Exception handler method that handles instances of ResponseStatusException.
-     * It returns a ResponseEntity object that includes the status code and the reason
-     * for the exception as a String.
-     *
-     * @param ex the ResponseStatusException that needs to be handled
-     * @return a ResponseEntity object that includes the status code and the reason
-     * for the exception as a String
-     */
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
-        return ResponseEntity
-                .status(ex.getStatus())
-                .body(ex.getReason());
     }
 }

@@ -31,41 +31,22 @@ public class EmployerService {
      * @param city        the city of the Employer's location
      * @param state       the state of the Employer's location
      * @param zip         the zip code of the Employer's location
-     * @param capacity
-     * @param email
-     * @param role
-     * @param
      * @return the created Employer, or null if an Employer with the same name already exists in the database
      */
     @Transactional
-    public Employer createEmployer(String name, String description, String street, String city, String zip, String state,   String password,String capacity, String email, String role) {
-        if (employerRepository.findByName(name) != null) {
+    public Employer createEmployer(String id, String name, String description, String street, String city, String state, String zip) {
+        if (employerRepository.findById(id) != null) {
             return null;
         }
         Employer employer = new Employer();
-        Address address = new Address(street, city, state, zip);
-        employer.setAddress(address);
+        employer.setId(id);
         employer.setName(name);
         employer.setDescription(description);
-        employer.setCapacity(capacity);
-        employer.setEmail(email);
-        employer.setRole(role);
-        employer.setPassword(password);
-        System.out.println("Email :" + email);
-        System.out.println("Name :" + name);
-        System.out.println("capacity :" + capacity);
-        System.out.println("role :" + role);
-        System.out.println("password :" + password);
-
-
-
-
-
-
+        Address address = new Address(street, city, state, zip);
+        employer.setAddress(address);
         // Set the Employees of the new Employer to an empty ArrayList
         employer.setEmployees(new ArrayList<Employee>());
         Employer savedEmployer = employerRepository.save(employer);
-        System.out.println(savedEmployer);
         entityManager.flush();
         return savedEmployer;
     }
@@ -76,7 +57,7 @@ public class EmployerService {
      * @param id the ID of the Employer to retrieve
      * @return the Employer with the specified ID, or null if the Employer was not found in the database
      */
-    public Employer getEmployer(long id) {
+    public Employer getEmployer(String id) {
         Employer employer = employerRepository.findById(id);
         return employer;
     }
@@ -100,12 +81,10 @@ public class EmployerService {
      * @param city        the new city for the Employer's location (null to keep the existing address)
      * @param state       the new state for the Employer's location (null to keep the existing address)
      * @param zip         the new zip code for the Employer's location (null to keep the existing address)
-     * @param role
-     * @param password
      * @return the updated Employer
      */
     @Transactional
-    public Employer updateEmployer(long employerId, String name, String description, String street, String city, String state, String zip, String capacity, String email, String role, String password) throws Exception {
+    public Employer updateEmployer(String employerId, String name, String description, String street, String city, String state, String zip) throws Exception {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
             throw new Exception("Employer does not exist!");
@@ -151,7 +130,7 @@ public class EmployerService {
      * @return the deleted Employer, or null if the Employer was not found
      * @throws ResponseStatusException if the Employer with the specified ID has associated Employees
      */
-    public Employer deleteEmployer(long id) {
+    public Employer deleteEmployer(String id) {
         Employer optionalEmployer = employerRepository.findById(id);
         if (optionalEmployer != null) {
             if (optionalEmployer.getEmployees() != null) {
@@ -161,7 +140,7 @@ public class EmployerService {
             employerRepository.delete(optionalEmployer);
             return optionalEmployer;
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found.");
+            return null;
         }
     }
 }
