@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 
@@ -21,27 +22,42 @@ public class Employer {
     @NotBlank( message = "Name may not be empty or full of white spaces")
     private String name;
 
-    @Column(name = "description")
-    private String description;
-
     @Embedded
     private Address address;
 
     @Transient
     private List<Employee> employees;
 
-    public Employer(String id, String name, String description, Address address, List<Employee> employees) {
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "seats")
+    private int seats;
+
+    @Column(name = "is_google")
+    private boolean is_google;
+
+    @Column(name = "is_verified")
+    private boolean is_verified;
+
+    public Employer(String id, String name, Address address, String email, int seats, List<Employee> employees, boolean is_google, boolean is_verified) {
         this.id = id;
         this.name = name;
-        this.description = description;
         this.address = address;
         this.employees = employees;
+        this.email = email;
+        this.seats = seats;
+        this.is_google = is_google;
+        this.is_verified = is_verified;
     }
 
     public Employer() {
+
     }
 
-    @XmlElement(name = "id")
+    public Employer(String id, String name, Address address, ArrayList<Employee> employees) {
+    }
+
     public String getId() {
         return id;
     }
@@ -50,16 +66,14 @@ public class Employer {
         this.id = id;
     }
 
-    @XmlElement(name = "employees")
-    public List<Employee> getEmployees() {
-        return employees;
+    public String getName() {
+        return name;
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @XmlElement(name = "address")
     public Address getAddress() {
         return address;
     }
@@ -68,21 +82,43 @@ public class Employer {
         this.address = address;
     }
 
-    @XmlElement(name = "description")
-    public String getDescription() {
-        return description;
+    public List<Employee> getEmployees() {
+        return employees;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 
-    @XmlElement(name = "name")
-    public String getName() {
-        return name;
+    public String getEmail() {
+        return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getSeats() {
+        return seats;
+    }
+
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    public boolean isIs_google() {
+        return is_google;
+    }
+
+    public void setIs_google(boolean is_google) {
+        this.is_google = is_google;
+    }
+
+    public boolean isIs_verified() {
+        return is_verified;
+    }
+
+    public void setIs_verified(boolean is_verified) {
+        this.is_verified = is_verified;
     }
 }

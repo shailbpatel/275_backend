@@ -13,6 +13,7 @@ import sjsu.cmpe275.repository.EmployerRepository;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EmployerService {
@@ -22,30 +23,17 @@ public class EmployerService {
     @Autowired
     private EntityManager entityManager;
 
-    /**
-     * Creates a new Employer with the specified name, description, and address, and saves it to the database.
-     *
-     * @param name        the name of the Employer to create
-     * @param description a description of the Employer
-     * @param street      the street address of the Employer's location
-     * @param city        the city of the Employer's location
-     * @param state       the state of the Employer's location
-     * @param zip         the zip code of the Employer's location
-     * @return the created Employer, or null if an Employer with the same name already exists in the database
-     */
+    public List<Employer> getAllEmployer() {
+        return employerRepository.findAll();
+    }
+
     @Transactional
-    public Employer createEmployer(String id, String name, String description, String street, String city, String state, String zip) {
+    public Employer createEmployer(String id, String name, String street, String city, String state, String zip, String email, Integer seats, Boolean is_google, String password) {
         if (employerRepository.findById(id) != null) {
             return null;
         }
-        Employer employer = new Employer();
-        employer.setId(id);
-        employer.setName(name);
-        employer.setDescription(description);
         Address address = new Address(street, city, state, zip);
-        employer.setAddress(address);
-        // Set the Employees of the new Employer to an empty ArrayList
-        employer.setEmployees(new ArrayList<Employee>());
+        Employer employer = new Employer(id, name, address, email, seats, new ArrayList<Employee>(), is_google, false);
         Employer savedEmployer = employerRepository.save(employer);
         entityManager.flush();
         return savedEmployer;
@@ -67,7 +55,7 @@ public class EmployerService {
      *
      * @return an Iterable of all Employers in the database
      */
-    public Iterable<Employer> getAllEmployers() {
+    public List<Employer> getAllEmployers() {
         return employerRepository.findAll();
     }
 
@@ -92,10 +80,6 @@ public class EmployerService {
 
         if (name != null) {
             optionalEmployer.setName(name);
-        }
-
-        if (description != null) {
-            optionalEmployer.setDescription(description);
         }
 
         if (street != null || city != null || state != null || zip != null) {

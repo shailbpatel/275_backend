@@ -4,6 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import sjsu.cmpe275.entity.Employee;
 
+import java.util.List;
+
 public interface EmployeeRepository extends CrudRepository<Employee, Long> {
     Employee findByIdAndEmployerId(long id, String employer_id);
+
+    List<Employee> findByEmployerId(String employer_id);
 }

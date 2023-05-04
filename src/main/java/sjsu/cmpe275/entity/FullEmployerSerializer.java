@@ -17,7 +17,6 @@ public class FullEmployerSerializer extends JsonSerializer<Employer> {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("id", employer.getId());
         jsonGenerator.writeStringField("name", employer.getName());
-        jsonGenerator.writeStringField("description", employer.getDescription());
 
         // Serialize address
         Address address = employer.getAddress();

@@ -14,6 +14,8 @@ import sjsu.cmpe275.service.EmployeeService;
 import sjsu.cmpe275.service.EmployerService;
 import sjsu.cmpe275.service.ErrorResponse;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/employer")
 public class EmployerController {
@@ -28,7 +30,6 @@ public class EmployerController {
      * Creates a new employer and returns the corresponding HTTP response with the employer information.
      *
      * @param name        the name of the employer (required)
-     * @param description the description of the employer (optional)
      * @param street      the street address of the employer (optional)
      * @param city        the city of the employer (optional)
      * @param state       the state of the employer (optional)
@@ -42,14 +43,17 @@ public class EmployerController {
     public ResponseEntity<?> createEmployer(
             @RequestParam(required = true) String id,
             @RequestParam(required = true) String name,
-            @RequestParam(required = false) String description,
             @RequestParam(required = false) String street,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String state,
             @RequestParam(required = false) String zip,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Integer seats,
+            @RequestParam(required = false) Boolean is_google,
+            @RequestParam(required = false) String password,
             @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
 
-        Employer newEmployer = employerService.createEmployer(id, name, description, street, city, state, zip);
+        Employer newEmployer = employerService.createEmployer(id, name, street, city, state, zip, email, seats, is_google, password);
 
         if (newEmployer == null) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Employer already exists.");
@@ -66,6 +70,25 @@ public class EmployerController {
         }
     }
 
+    @GetMapping("/{employerId}/employees")
+    public List<Employee> getAllEmployeesByEmployerId(@PathVariable String employerId) {
+        return employeeService.getAllEmployeesByEmployerId(employerId);
+    }
+
+    @GetMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> getAllEmployers(@RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
+        List<Employer> employers = employerService.getAllEmployers();
+        if (employers.isEmpty()) {
+            ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "No employers found.");
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+        }
+        if (format.equals("xml")) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employers);
+        } else {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(employers);
+        }
+    }
+
     /**
      * Retrieves an employer by ID and returns it in either JSON or XML format.
      *
@@ -75,7 +98,8 @@ public class EmployerController {
      * @throws ResponseStatusException if the employer with the given ID could not be found
      */
     @GetMapping(value = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> getEmployer(@PathVariable String employerId, @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
+    public ResponseEntity<?> getEmployer(@PathVariable(required = false) String employerId, @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
+
         Employer employer = employerService.getEmployer(employerId);
         if(employer == null) {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Employer not found.");

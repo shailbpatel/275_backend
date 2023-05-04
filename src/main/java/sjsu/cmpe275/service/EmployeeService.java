@@ -204,4 +204,8 @@ public class EmployeeService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found.");
         }
     }
+
+    public List<Employee> getAllEmployeesByEmployerId(String employerId) {
+        return employeeRepository.findByEmployerId(employerId);
+    }
 }

@@ -13,7 +13,6 @@ public class ShallowEmployerSerializer extends JsonSerializer<Employer> {
         jsonGenerator.writeObjectFieldStart("employer");
         jsonGenerator.writeStringField("id", employer.getId());
         jsonGenerator.writeStringField("name", employer.getName());
-        jsonGenerator.writeStringField("description", employer.getDescription());
         jsonGenerator.writeEndObject();
     }
 }
