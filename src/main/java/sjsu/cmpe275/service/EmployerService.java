@@ -9,10 +9,11 @@ import org.springframework.web.server.ResponseStatusException;
 import sjsu.cmpe275.entity.Address;
 import sjsu.cmpe275.entity.Employee;
 import sjsu.cmpe275.entity.Employer;
+import sjsu.cmpe275.repository.EmployeeRepository;
 import sjsu.cmpe275.repository.EmployerRepository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EmployerService {
@@ -21,31 +22,17 @@ public class EmployerService {
 
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
-    /**
-     * Creates a new Employer with the specified name, description, and address, and saves it to the database.
-     *
-     * @param name        the name of the Employer to create
-     * @param description a description of the Employer
-     * @param street      the street address of the Employer's location
-     * @param city        the city of the Employer's location
-     * @param state       the state of the Employer's location
-     * @param zip         the zip code of the Employer's location
-     * @return the created Employer, or null if an Employer with the same name already exists in the database
-     */
+
     @Transactional
-    public Employer createEmployer(String id, String name, String description, String street, String city, String state, String zip) {
+    public Employer createEmployer(String id, String name, String street, String city, String state, String zip, String email, String password, Integer seats, Boolean is_google) {
         if (employerRepository.findById(id) != null) {
             return null;
         }
-        Employer employer = new Employer();
-        employer.setId(id);
-        employer.setName(name);
-        employer.setDescription(description);
         Address address = new Address(street, city, state, zip);
-        employer.setAddress(address);
-        // Set the Employees of the new Employer to an empty ArrayList
-        employer.setEmployees(new ArrayList<Employee>());
+        Employer employer = new Employer(id, name, address, email, password, seats, is_google, false);
         Employer savedEmployer = employerRepository.save(employer);
         entityManager.flush();
         return savedEmployer;
@@ -67,7 +54,7 @@ public class EmployerService {
      *
      * @return an Iterable of all Employers in the database
      */
-    public Iterable<Employer> getAllEmployers() {
+    public List<Employer> getAllEmployers() {
         return employerRepository.findAll();
     }
 
@@ -76,7 +63,6 @@ public class EmployerService {
      *
      * @param employerId  the ID of the Employer to update
      * @param name        the new name for the Employer (null to keep the existing name)
-     * @param description the new description for the Employer (null to keep the existing description)
      * @param street      the new street address for the Employer's location (null to keep the existing address)
      * @param city        the new city for the Employer's location (null to keep the existing address)
      * @param state       the new state for the Employer's location (null to keep the existing address)
@@ -84,7 +70,7 @@ public class EmployerService {
      * @return the updated Employer
      */
     @Transactional
-    public Employer updateEmployer(String employerId, String name, String description, String street, String city, String state, String zip) throws Exception {
+    public Employer updateEmployer(String employerId, String name, String street, String city, String state, String zip) throws Exception {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
             throw new Exception("Employer does not exist!");
@@ -92,10 +78,6 @@ public class EmployerService {
 
         if (name != null) {
             optionalEmployer.setName(name);
-        }
-
-        if (description != null) {
-            optionalEmployer.setDescription(description);
         }
 
         if (street != null || city != null || state != null || zip != null) {
@@ -133,8 +115,9 @@ public class EmployerService {
     public Employer deleteEmployer(String id) {
         Employer optionalEmployer = employerRepository.findById(id);
         if (optionalEmployer != null) {
-            if (optionalEmployer.getEmployees() != null) {
-                if (!optionalEmployer.getEmployees().isEmpty())
+            List<Employee> empList = employeeRepository.findByEmployerId(id);
+            if (empList != null) {
+                if (!empList.isEmpty())
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employer has employees and cannot be deleted.");
             }
             employerRepository.delete(optionalEmployer);

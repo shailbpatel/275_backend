@@ -1,17 +1,12 @@
 package sjsu.cmpe275.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "employer")
-@XmlRootElement(name = "employer")
-@JsonSerialize(using = FullEmployerSerializer.class)
 public class Employer {
     @Id
     @Column(name = "id")
@@ -21,27 +16,41 @@ public class Employer {
     @NotBlank( message = "Name may not be empty or full of white spaces")
     private String name;
 
-    @Column(name = "description")
-    private String description;
-
     @Embedded
     private Address address;
 
-    @Transient
-    private List<Employee> employees;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    public Employer(String id, String name, String description, Address address, List<Employee> employees) {
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "seats", nullable = false)
+    @Min(value = 3, message = "The minimum number of seats is 3")
+    @Max(value = 100, message = "The maximum number of seats is 100")
+    private int seats;
+
+    @Column(name = "is_google")
+    private boolean isGoogle;
+
+    @Column(name = "is_verified")
+    private boolean isVerified;
+
+    public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified) {
         this.id = id;
         this.name = name;
-        this.description = description;
         this.address = address;
-        this.employees = employees;
+        this.email = email;
+        this.password = password;
+        this.seats = seats;
+        this.isGoogle = is_google;
+        this.isVerified = is_verified;
     }
 
     public Employer() {
+
     }
 
-    @XmlElement(name = "id")
     public String getId() {
         return id;
     }
@@ -50,16 +59,14 @@ public class Employer {
         this.id = id;
     }
 
-    @XmlElement(name = "employees")
-    public List<Employee> getEmployees() {
-        return employees;
+    public String getName() {
+        return name;
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @XmlElement(name = "address")
     public Address getAddress() {
         return address;
     }
@@ -68,21 +75,43 @@ public class Employer {
         this.address = address;
     }
 
-    @XmlElement(name = "description")
-    public String getDescription() {
-        return description;
+    public String getEmail() {
+        return email;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    @XmlElement(name = "name")
-    public String getName() {
-        return name;
+    public int getSeats() {
+        return seats;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSeats(int seats) {
+        this.seats = seats;
+    }
+
+    public boolean isIsGoogle() {
+        return isGoogle;
+    }
+
+    public void setIsGoogle(boolean is_google) {
+        this.isGoogle = is_google;
+    }
+
+    public boolean isIsVerified() {
+        return isVerified;
+    }
+
+    public void setIsVerified(boolean is_verified) {
+        this.isVerified = is_verified;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
