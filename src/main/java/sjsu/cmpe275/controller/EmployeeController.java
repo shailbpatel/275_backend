@@ -38,9 +38,11 @@ public class EmployeeController {
      */
     @PostMapping(value = "/create/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> createEmployee(
-            @RequestParam("name") String name,
+            @RequestParam(value = "tokenId", required = false) String tokenId,
+            @RequestParam(value = "is_google", required = false) boolean isGoogle,
+            @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "email", required = true) String email,
-            @RequestParam(value = "password", required = true) String password,
+            @RequestParam(value = "password", required = false) String password,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "street", required = false) String street,
             @RequestParam(value = "city", required = false) String city,
@@ -51,7 +53,7 @@ public class EmployeeController {
             @RequestParam(value = "format", defaultValue = "json") String format) {
 
         try {
-            Employee newEmployee = employeeService.createEmployee(name, email, password, title, street, city, state, zip, managerId, employerId);
+            Employee newEmployee = employeeService.createEmployee(name, email, password, title, street, city, state, zip, managerId, employerId, isGoogle);
             return ResponseEntity.status(HttpStatus.OK).body(newEmployee);
 
         } catch (ResponseStatusException ex) {
