@@ -60,7 +60,7 @@ public class EmployeeService {
      * @throws ResponseStatusException if the Employer object does not exist or the Manager does not exist
      */
 
-    public Employee createEmployee(String name, String email, String password, String title, String street, String city, String state, String zip, Long managerId, String employerId) {
+    public Employee createEmployee(String name, String email, String password, String title, String street, String city, String state, String zip, Long managerId, String employerId, boolean isGoogle) {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employer object does not exist!");
@@ -78,7 +78,7 @@ public class EmployeeService {
         }
         Address address = new Address(street, city, state, zip);
         long id = generateEmployeeId(employerId);
-        Employee employee = new Employee(id, employerId, name, email, password, title, address, optionalEmployer, Manager);
+        Employee employee = new Employee(id, employerId, name, email, password, title, address, optionalEmployer, Manager, isGoogle);
 
         if (Manager != null) {
             employee.setManager(Manager);

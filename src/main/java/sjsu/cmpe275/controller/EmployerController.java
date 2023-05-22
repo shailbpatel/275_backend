@@ -41,6 +41,7 @@ public class EmployerController {
 
     @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> createEmployer(
+            @RequestParam(required = false) String tokenId,
             @RequestParam(required = true) String id,
             @RequestParam(required = true) String name,
             @RequestParam(required = false) String street,
@@ -48,7 +49,7 @@ public class EmployerController {
             @RequestParam(required = false) String state,
             @RequestParam(required = false) String zip,
             @RequestParam(required = true) String email,
-            @RequestParam(required = true) String password,
+            @RequestParam(required = false) String password,
             @RequestParam(required = false) Integer seats,
             @RequestParam(required = false) Boolean is_google,
             @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {

@@ -55,10 +55,16 @@ public class Employee {
     @Access(AccessType.PROPERTY)
     private Employee Manager;
 
+    @Column(name = "is_google")
+    private boolean isGoogle;
+
+    @Column(name = "is_verified")
+    private boolean isVerified;
+
     public Employee() {
     }
 
-    public Employee(long id, String employerId, String name, String email, String password, String title, Address address, Employer employer, Employee manager) {
+    public Employee(long id, String employerId, String name, String email, String password, String title, Address address, Employer employer, Employee manager, boolean isGoogle) {
         this.id = id;
         this.employerId = employerId;
         this.name = name;
@@ -68,6 +74,8 @@ public class Employee {
         this.address = address;
         this.employer = employer;
         this.setManager(manager);
+        this.isVerified = false;
+        this.isGoogle = isGoogle;
     }
 
     public void setManager(Employee manager) {
@@ -163,5 +171,21 @@ public class Employee {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public boolean isGoogle() {
+        return isGoogle;
+    }
+
+    public void setGoogle(boolean google) {
+        isGoogle = google;
     }
 }
