@@ -1,18 +1,12 @@
 package sjsu.cmpe275.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "employer")
-@XmlRootElement(name = "employer")
-@JsonSerialize(using = FullEmployerSerializer.class)
 public class Employer {
     @Id
     @Column(name = "id")
@@ -25,37 +19,36 @@ public class Employer {
     @Embedded
     private Address address;
 
-    @Transient
-    private List<Employee> employees;
-
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "seats")
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "seats", nullable = false)
+    @Min(value = 3, message = "The minimum number of seats is 3")
+    @Max(value = 100, message = "The maximum number of seats is 100")
     private int seats;
 
     @Column(name = "is_google")
-    private boolean is_google;
+    private boolean isGoogle;
 
     @Column(name = "is_verified")
-    private boolean is_verified;
+    private boolean isVerified;
 
-    public Employer(String id, String name, Address address, String email, int seats, List<Employee> employees, boolean is_google, boolean is_verified) {
+    public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.employees = employees;
         this.email = email;
+        this.password = password;
         this.seats = seats;
-        this.is_google = is_google;
-        this.is_verified = is_verified;
+        this.isGoogle = is_google;
+        this.isVerified = is_verified;
     }
 
     public Employer() {
 
-    }
-
-    public Employer(String id, String name, Address address, ArrayList<Employee> employees) {
     }
 
     public String getId() {
@@ -82,14 +75,6 @@ public class Employer {
         this.address = address;
     }
 
-    public List<Employee> getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -106,19 +91,27 @@ public class Employer {
         this.seats = seats;
     }
 
-    public boolean isIs_google() {
-        return is_google;
+    public boolean isIsGoogle() {
+        return isGoogle;
     }
 
-    public void setIs_google(boolean is_google) {
-        this.is_google = is_google;
+    public void setIsGoogle(boolean is_google) {
+        this.isGoogle = is_google;
     }
 
-    public boolean isIs_verified() {
-        return is_verified;
+    public boolean isIsVerified() {
+        return isVerified;
     }
 
-    public void setIs_verified(boolean is_verified) {
-        this.is_verified = is_verified;
+    public void setIsVerified(boolean is_verified) {
+        this.isVerified = is_verified;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

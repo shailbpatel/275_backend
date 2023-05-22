@@ -47,13 +47,13 @@ public class EmployerController {
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String state,
             @RequestParam(required = false) String zip,
-            @RequestParam(required = false) String email,
+            @RequestParam(required = true) String email,
+            @RequestParam(required = true) String password,
             @RequestParam(required = false) Integer seats,
             @RequestParam(required = false) Boolean is_google,
-            @RequestParam(required = false) String password,
             @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
 
-        Employer newEmployer = employerService.createEmployer(id, name, street, city, state, zip, email, seats, is_google, password);
+        Employer newEmployer = employerService.createEmployer(id, name, street, city, state, zip, email, password, seats, is_google);
 
         if (newEmployer == null) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Employer already exists.");
@@ -117,7 +117,6 @@ public class EmployerController {
      *
      * @param employerId  the ID of the employer to update
      * @param name        the new name of the employer
-     * @param description the new description of the employer (optional)
      * @param street      the new street address of the employer (optional)
      * @param city        the new city of the employer (optional)
      * @param state       the new state of the employer (optional)
@@ -130,7 +129,6 @@ public class EmployerController {
     public ResponseEntity<?> updateEmployer(
                                         @PathVariable("employerId") String employerId,
                                         @RequestParam(required = true) String name,
-                                        @RequestParam(required = false) String description,
                                         @RequestParam(required = false) String street,
                                         @RequestParam(required = false) String city,
                                         @RequestParam(required = false) String state,
@@ -138,7 +136,7 @@ public class EmployerController {
                                         @RequestParam(required = false) String format) {
 
         try {
-            Employer employer = employerService.updateEmployer(employerId, name, description, street, city, state, zip);
+            Employer employer = employerService.updateEmployer(employerId, name, street, city, state, zip);
             if (format != null && format.equals("xml")) {
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employer);
             } else {

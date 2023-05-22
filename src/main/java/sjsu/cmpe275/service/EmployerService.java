@@ -9,10 +9,10 @@ import org.springframework.web.server.ResponseStatusException;
 import sjsu.cmpe275.entity.Address;
 import sjsu.cmpe275.entity.Employee;
 import sjsu.cmpe275.entity.Employer;
+import sjsu.cmpe275.repository.EmployeeRepository;
 import sjsu.cmpe275.repository.EmployerRepository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,18 +22,17 @@ public class EmployerService {
 
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
-    public List<Employer> getAllEmployer() {
-        return employerRepository.findAll();
-    }
 
     @Transactional
-    public Employer createEmployer(String id, String name, String street, String city, String state, String zip, String email, Integer seats, Boolean is_google, String password) {
+    public Employer createEmployer(String id, String name, String street, String city, String state, String zip, String email, String password, Integer seats, Boolean is_google) {
         if (employerRepository.findById(id) != null) {
             return null;
         }
         Address address = new Address(street, city, state, zip);
-        Employer employer = new Employer(id, name, address, email, seats, new ArrayList<Employee>(), is_google, false);
+        Employer employer = new Employer(id, name, address, email, password, seats, is_google, false);
         Employer savedEmployer = employerRepository.save(employer);
         entityManager.flush();
         return savedEmployer;
@@ -64,7 +63,6 @@ public class EmployerService {
      *
      * @param employerId  the ID of the Employer to update
      * @param name        the new name for the Employer (null to keep the existing name)
-     * @param description the new description for the Employer (null to keep the existing description)
      * @param street      the new street address for the Employer's location (null to keep the existing address)
      * @param city        the new city for the Employer's location (null to keep the existing address)
      * @param state       the new state for the Employer's location (null to keep the existing address)
@@ -72,7 +70,7 @@ public class EmployerService {
      * @return the updated Employer
      */
     @Transactional
-    public Employer updateEmployer(String employerId, String name, String description, String street, String city, String state, String zip) throws Exception {
+    public Employer updateEmployer(String employerId, String name, String street, String city, String state, String zip) throws Exception {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
             throw new Exception("Employer does not exist!");
@@ -117,8 +115,9 @@ public class EmployerService {
     public Employer deleteEmployer(String id) {
         Employer optionalEmployer = employerRepository.findById(id);
         if (optionalEmployer != null) {
-            if (optionalEmployer.getEmployees() != null) {
-                if (!optionalEmployer.getEmployees().isEmpty())
+            List<Employee> empList = employeeRepository.findByEmployerId(id);
+            if (empList != null) {
+                if (!empList.isEmpty())
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employer has employees and cannot be deleted.");
             }
             employerRepository.delete(optionalEmployer);

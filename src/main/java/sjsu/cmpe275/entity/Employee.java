@@ -13,10 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "employee")
-@XmlRootElement(name = "employee")
 @IdClass(EmployeeId.class)
-@JsonInclude(Include.NON_NULL)
-@JsonSerialize(using = FullEmployeeSerializer.class)
 public class Employee {
 
     @Id
@@ -31,15 +28,17 @@ public class Employee {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name="password")
+    private String password;
 
     @Column(name = "title")
     private String title;
 
     @Embedded
     private Address address;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employer_id", referencedColumnName = "id", updatable = false, insertable = false)
@@ -48,7 +47,6 @@ public class Employee {
     private Long manager_id;
     private String manager_employer_id;
 
-    @JsonSerialize(using = ShallowEmployeeSerializer.class)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns ({
             @JoinColumn(name = "manager_id", referencedColumnName = "id", insertable = false, updatable = false),
@@ -57,42 +55,19 @@ public class Employee {
     @Access(AccessType.PROPERTY)
     private Employee Manager;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "collaborator",
-            joinColumns = {
-                    @JoinColumn(name = "employee_id", referencedColumnName = "id"),
-                    @JoinColumn(name = "employee_employer_id", referencedColumnName = "employer_id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "collaborator_id", referencedColumnName = "id"),
-                    @JoinColumn(name = "collaborator_employer_id", referencedColumnName = "employer_id")
-            }
-    )
-    @Access(AccessType.PROPERTY)
-    private List<Employee> collaborators;
-
-    @OneToMany(mappedBy = "Manager", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Employee> reports;
-
     public Employee() {
     }
 
-    public Employee(long id, String employerId, String name, String email, String title, Address address, Employer employer, Employee manager, List<Employee> collaborators, List<Employee> reports) {
+    public Employee(long id, String employerId, String name, String email, String password, String title, Address address, Employer employer, Employee manager) {
         this.id = id;
         this.employerId = employerId;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.title = title;
         this.address = address;
         this.employer = employer;
         this.setManager(manager);
-        this.collaborators = collaborators;
-        this.reports = reports;
-    }
-
-    public Long getManagerId() {
-        return manager_id;
     }
 
     public void setManager(Employee manager) {
@@ -133,20 +108,12 @@ public class Employee {
         return employerId;
     }
 
-    public List<Employee> getCollaborators() {
-        return collaborators;
-    }
-
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public void setCollaborators(List<Employee> collaborators) {
-        this.collaborators = collaborators;
     }
 
     public String getTitle() {
@@ -186,15 +153,15 @@ public class Employee {
         this.address = address;
     }
 
-    public void setEmployerId(String employerId) {
-        this.employerId = employerId;
+    public Long getManager_id() {
+        return manager_id;
     }
 
-    public List<Employee> getReports() {
-        return reports;
+    public String getPassword() {
+        return password;
     }
 
-    public void setReports(List<Employee> reports) {
-        this.reports = reports;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

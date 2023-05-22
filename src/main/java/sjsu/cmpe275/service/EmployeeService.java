@@ -60,39 +60,33 @@ public class EmployeeService {
      * @throws ResponseStatusException if the Employer object does not exist or the Manager does not exist
      */
 
-    public Employee createEmployee(String name, String email, String title, String street, String city, String state, String zip, Long managerId, String employerId) {
+    public Employee createEmployee(String name, String email, String password, String title, String street, String city, String state, String zip, Long managerId, String employerId) {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employer object does not exist!");
         }
+
         Employee Manager = null;
         if (managerId != null) {
             Manager = employeeRepository.findByIdAndEmployerId(managerId, employerId);
             if (Manager == null) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Manager does not exist!");
             }
+            if (Manager.getEmail().equals(email)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot set self-manager!");
+            }
         }
         Address address = new Address(street, city, state, zip);
-        List<Employee> reports = new ArrayList<>();
-        List<Employee> collaborators = new ArrayList<>();
         long id = generateEmployeeId(employerId);
-        Employee employee = new Employee(id, employerId, name, email, title, address, optionalEmployer, Manager, collaborators, reports);
+        Employee employee = new Employee(id, employerId, name, email, password, title, address, optionalEmployer, Manager);
 
         if (Manager != null) {
             employee.setManager(Manager);
         }
 
-        List<Employee> currentEmpList = optionalEmployer.getEmployees();
-        if (currentEmpList == null) {
-            currentEmpList = new ArrayList<Employee>();
-        }
-        currentEmpList.add(employee);
-        optionalEmployer.setEmployees(currentEmpList);
-
         Employee savedEmployee = employeeRepository.save(employee);
         return savedEmployee;
     }
-
 
     /**
      * Retrieves an Employee object from the employee repository based on the provided EmployeeId object.
@@ -156,14 +150,10 @@ public class EmployeeService {
             }
             Employee currentManager = employee.getManager();
             if(currentManager != null) {
-                List<Employee> oldReports = currentManager.getReports();
-                oldReports.add(employee);
-                currentManager.setReports(oldReports);
+                // TODO - delete the record in DirectReport entity for old manager and this employee
             }
 
-            List<Employee> currentReports = newManager.getReports();
-            currentReports.add(employee);
-            newManager.setReports(currentReports);
+            // TODO - enter a record in DirectReport entity for new manager and this employee
             employee.setManager(newManager);
 
         } else if (managerId == null && managerEmployerId == null) {
@@ -183,19 +173,16 @@ public class EmployeeService {
      * @return The deleted Employee object.
      * @throws ResponseStatusException If the Employee with the given ID and employer ID is not found, or if the Employee has reports and cannot be deleted.
      */
-//    @Transactional
     public Employee deleteEmployee(Long id, String employerId) throws ResponseStatusException {
         Employee optionalEmployee = employeeRepository.findByIdAndEmployerId(id, employerId);
         if (optionalEmployee != null) {
-            ;
-            if (!optionalEmployee.getReports().isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee has reports and cannot be deleted.");
-            }
+            // TODO - check if this employee has any manager in DirectReport entity
+//            if (!optionalEmployee.getReports().isEmpty()) {
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Employee has reports and cannot be deleted.");
+//            }
             Employee currentManager = optionalEmployee.getManager();
             if (currentManager != null) {
-                List<Employee> oldReports = currentManager.getReports();
-                oldReports.remove(optionalEmployee);
-                currentManager.setReports(oldReports);
+                // TODO - delete from DirectReport entity where employee = optionalEmployee and manager = currentManager
             }
             employeeRepository.delete(optionalEmployee);
             entityManager.flush();

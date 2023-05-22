@@ -39,26 +39,19 @@ public class EmployeeController {
     @PostMapping(value = "/create/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> createEmployee(
             @RequestParam("name") String name,
-            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "email", required = true) String email,
+            @RequestParam(value = "password", required = true) String password,
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "street", required = false) String street,
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "state", required = false) String state,
             @RequestParam(value = "zip", required = false) String zip,
-            @RequestParam(value = "managerId", required = false) Long managerId,
-            @PathVariable("employerId") String employerId,
+            @RequestParam(value = "manager_id", required = false) Long managerId,
+            @RequestParam(value = "employer_id") String employerId,
             @RequestParam(value = "format", defaultValue = "json") String format) {
 
         try {
-            Employee newEmployee = employeeService.createEmployee(name, email, title, street, city, state, zip, managerId, employerId);
-
-            HttpHeaders headers = new HttpHeaders();
-            if ("json".equalsIgnoreCase(format)) {
-                headers.setContentType(MediaType.APPLICATION_JSON);
-            }
-            if ("xml".equalsIgnoreCase(format)) {
-                headers.setContentType(MediaType.APPLICATION_XML);
-            }
+            Employee newEmployee = employeeService.createEmployee(name, email, password, title, street, city, state, zip, managerId, employerId);
             return ResponseEntity.status(HttpStatus.OK).body(newEmployee);
 
         } catch (ResponseStatusException ex) {
