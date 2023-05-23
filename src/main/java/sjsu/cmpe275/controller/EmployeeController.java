@@ -128,17 +128,9 @@ public class EmployeeController {
     private List<Employee> convertToEmployees(List<BulkEmployee> bulkEmployees) {
         List<Employee> employees = new ArrayList<>();
         for (BulkEmployee bulkEmployee : bulkEmployees) {
-//            Employee employee = new Employee();
 
-            // Set the values from BulkEmployee to Employee
-//            employee.setEmail(bulkEmployee.getEmployeeEmailId());
-//            employee.setName(bulkEmployee.getEmployeeName());
-//            employee.setPassword(bulkEmployee.getPassword());
-//            employee.setManagerEmployerId(bulkEmployee.getManagerEmailId());
-//            employee.setEmployerId("SJSU");
-
+            //TODO: Make employerId dynamic
             String employerId = "SJSU";
-
 
             Employer employer = employerRepository.findById(employerId);
             if (employer == null) {
