@@ -45,7 +45,11 @@ public class LoginController {
             userType = "Employee";
         }
 
-        if (!userLoginRequest.isGoogle()) {
+        if (!userLoginRequest.getIsGoogle()) {
+            if((employerUser!=null && userLoginRequest.getPassword()!=null && employerUser.isIsGoogle()) ||
+                (employeeUser!=null && userLoginRequest.getPassword()!=null && employeeUser.isGoogle())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Use Google for signing in");
+            }
             if((employerUser == null || !employerUser.getPassword().equals(userLoginRequest.getPassword())) &&
                 (employeeUser == null || !employeeUser.getPassword().equals(userLoginRequest.getPassword()))) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect email or password");

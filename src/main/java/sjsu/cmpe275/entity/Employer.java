@@ -4,10 +4,11 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Entity
 @Table(name = "employer")
-public class Employer {
+public class Employer implements User {
     @Id
     @Column(name = "id")
     private String id;
@@ -36,6 +37,9 @@ public class Employer {
     @Column(name = "is_verified")
     private boolean isVerified;
 
+    @Column(name = "token")
+    private String token;
+
     public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified) {
         this.id = id;
         this.name = name;
@@ -45,6 +49,7 @@ public class Employer {
         this.seats = seats;
         this.isGoogle = is_google;
         this.isVerified = is_verified;
+        this.token = UUID.randomUUID().toString();
     }
 
     public Employer() {
@@ -113,5 +118,9 @@ public class Employer {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getToken() {
+        return token;
     }
 }

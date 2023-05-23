@@ -15,4 +15,6 @@ public interface EmployerRepository extends CrudRepository<Employer, Long> {
     Employer findById(String id);
 
     Employer findByEmail(String email);
+
+    Employer findByToken(String token);
 }

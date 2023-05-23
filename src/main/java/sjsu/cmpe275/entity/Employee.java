@@ -2,19 +2,13 @@ package sjsu.cmpe275.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import java.util.UUID;
 
 
 @Entity
 @Table(name = "employee")
 @IdClass(EmployeeId.class)
-public class Employee {
+public class Employee implements User {
 
     @Id
     @Column(name = "id")
@@ -61,6 +55,9 @@ public class Employee {
     @Column(name = "is_verified")
     private boolean isVerified;
 
+    @Column(name = "token")
+    private String token;
+
     public Employee() {
     }
 
@@ -76,6 +73,7 @@ public class Employee {
         this.setManager(manager);
         this.isVerified = false;
         this.isGoogle = isGoogle;
+        this.token = UUID.randomUUID().toString();
     }
 
     public void setManager(Employee manager) {
@@ -188,4 +186,6 @@ public class Employee {
     public void setGoogle(boolean google) {
         isGoogle = google;
     }
+
+    public String getToken() {return token;}
 }

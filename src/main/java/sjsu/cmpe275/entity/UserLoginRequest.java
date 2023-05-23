@@ -21,7 +21,7 @@ public class UserLoginRequest {
         this.password = password;
     }
 
-    public boolean isGoogle() {
+    public boolean getIsGoogle() {
         return isGoogle;
     }
 

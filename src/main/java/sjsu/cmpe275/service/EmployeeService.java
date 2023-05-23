@@ -28,6 +28,9 @@ public class EmployeeService {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private EmailService emailService;
+
     /**
      * Generates a new employee ID for a specified employer.
      *
@@ -85,6 +88,8 @@ public class EmployeeService {
         }
 
         Employee savedEmployee = employeeRepository.save(employee);
+        User user = savedEmployee;
+        emailService.sendVerificationEmail(user);
         return savedEmployee;
     }
 
