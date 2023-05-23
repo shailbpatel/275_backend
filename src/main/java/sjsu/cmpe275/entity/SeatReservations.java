@@ -1,17 +1,15 @@
 package sjsu.cmpe275.entity;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "seatReservations")
 public class SeatReservations {
 
     @Id
-    @Column(name ="reservationId")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name ="reservationId", nullable = false)
     private int reservationId;
 
     @Column(name = "employerId")
@@ -31,6 +29,10 @@ public class SeatReservations {
         this.employeeId = employeeId;
         this.isPreemptable = isPreemptable;
         this.isGTD = isGTD;
+    }
+
+    public SeatReservations() {
+
     }
 
     public boolean isPreemptable() {
