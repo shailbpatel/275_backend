@@ -58,6 +58,9 @@ public class Employee implements User {
     @Column(name = "token")
     private String token;
 
+    @Column(name = "mop")
+    private int mop;
+
     public Employee() {
     }
 
@@ -74,6 +77,22 @@ public class Employee implements User {
         this.isVerified = false;
         this.isGoogle = isGoogle;
         this.token = UUID.randomUUID().toString();
+    }
+
+    public Employee(long id, String employerId, String name, String email, String password, String title, Address address, Employer employer, Employee manager, boolean isGoogle, int mop) {
+        this.id = id;
+        this.employerId = employerId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.title = title;
+        this.address = address;
+        this.employer = employer;
+        this.setManager(manager);
+        this.isVerified = false;
+        this.isGoogle = isGoogle;
+        this.token = UUID.randomUUID().toString();
+        this.mop = mop;
     }
 
     public void setManager(Employee manager) {

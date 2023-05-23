@@ -40,6 +40,9 @@ public class Employer implements User {
     @Column(name = "token")
     private String token;
 
+    @Column(name = "mop")
+    private int mop;
+
     public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified) {
         this.id = id;
         this.name = name;
@@ -50,6 +53,19 @@ public class Employer implements User {
         this.isGoogle = is_google;
         this.isVerified = is_verified;
         this.token = UUID.randomUUID().toString();
+    }
+
+    public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified, int mop) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.password = password;
+        this.seats = seats;
+        this.isGoogle = is_google;
+        this.isVerified = is_verified;
+        this.token = UUID.randomUUID().toString();
+        this.mop = mop;
     }
 
     public Employer() {

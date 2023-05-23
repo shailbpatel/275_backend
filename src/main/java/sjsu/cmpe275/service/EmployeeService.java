@@ -113,15 +113,11 @@ public class EmployeeService {
         return iterator.readAll();
     }
 
-    public List<Employee> convertToEmployees(List<BulkEmployee> bulkEmployees) {
+    public List<Employee> convertToEmployees(String employerId, List<BulkEmployee> bulkEmployees) {
         List<Employee> employees = new ArrayList<>();
 
         try{
             for (BulkEmployee bulkEmployee : bulkEmployees) {
-
-                //TODO: Make employerId dynamic
-                String employerId = "SJSU";
-
                 Employer employer = employerRepository.findById(employerId);
                 if (employer == null) {
                     throw new RuntimeException("Employer object does not exist!");

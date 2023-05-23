@@ -1,46 +1,26 @@
 package sjsu.cmpe275.controller;
 
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import sjsu.cmpe275.entity.Address;
 import sjsu.cmpe275.entity.BulkEmployee;
-import sjsu.cmpe275.entity.Employer;
-import sjsu.cmpe275.repository.EmployeeRepository;
-import sjsu.cmpe275.repository.EmployerRepository;
 import sjsu.cmpe275.service.EmployeeService;
 import sjsu.cmpe275.entity.Employee;
 import sjsu.cmpe275.service.ErrorResponse;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin
-//@Transactional
 @RequestMapping("/employee")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
-
-
-    @Autowired
-    private EmployerRepository employerRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
 
     /**
      * Creates a new employee for the specified employer and returns a ResponseEntity with the created employee in JSON or XML format,
@@ -78,7 +58,6 @@ public class EmployeeController {
         try {
             Employee newEmployee = employeeService.createEmployee(name, email, password, title, street, city, state, zip, managerId, employerId, isGoogle);
             return ResponseEntity.status(HttpStatus.OK).body(newEmployee);
-
         } catch (ResponseStatusException ex) {
             ErrorResponse response = new ErrorResponse(ex.getStatus().value(), ex.getReason());
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
@@ -89,30 +68,14 @@ public class EmployeeController {
     }
 
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("csvFile") MultipartFile file) throws IOException {
-
-        if(!file.isEmpty()) {
-            System.out.println("filed received");
-        }
-
-        System.out.println(file.getName());
-
-        String content = new String(file.getBytes());
-
+    @PostMapping("/{employerId}/upload")
+    public ResponseEntity<String> uploadFile(@PathVariable String employerId, @RequestParam("csvFile") MultipartFile file) throws IOException {
         List<BulkEmployee> bulkEmployees = employeeService.read(file.getInputStream(),BulkEmployee.class);
-        List<Employee> employees = employeeService.convertToEmployees(bulkEmployees);
-
-
-        System.out.println(bulkEmployees.toString());
+        List<Employee> employees = employeeService.convertToEmployees(employerId, bulkEmployees);
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new String("Sucess"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new String("Failed"));
         }
     }
-
-
-
-
 }
