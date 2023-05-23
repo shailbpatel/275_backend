@@ -137,6 +137,8 @@ public class EmployeeService {
                 long id = generateEmployeeId(employerId);
                 Employee employee = new Employee(id, employerId, bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, employer, Manager, false);
                 employeeRepository.save(employee);
+                User user = employee;
+                emailService.sendVerificationEmail(user);
                 employees.add(employee);
 
             }
