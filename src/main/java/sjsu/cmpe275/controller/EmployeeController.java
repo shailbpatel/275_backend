@@ -104,7 +104,6 @@ public class EmployeeController {
         List<Employee> employees = convertToEmployees(bulkEmployees);
 
 
-
         System.out.println(bulkEmployees.toString());
         try {
             return ResponseEntity.status(HttpStatus.OK).body(new String("Sucess"));

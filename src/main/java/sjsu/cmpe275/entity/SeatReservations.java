@@ -23,9 +23,15 @@ public class SeatReservations {
     @Column(name = "isPreemptable")
     private boolean isPreemptable;
 
-
     @Column(name = "isGTD")
     private boolean isGTD;
+
+    public SeatReservations(String employerId, long employeeId, boolean isPreemptable, boolean isGTD) {
+        this.employerId = employerId;
+        this.employeeId = employeeId;
+        this.isPreemptable = isPreemptable;
+        this.isGTD = isGTD;
+    }
 
     public boolean isPreemptable() {
         return isPreemptable;
