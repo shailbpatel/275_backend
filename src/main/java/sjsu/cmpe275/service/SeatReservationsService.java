@@ -67,11 +67,11 @@ public class SeatReservationsService {
                 Employee employee = employeeRepository.findByEmail(reservation.getEmployeeEmailId());
 
                 if (employee == null) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee is not registered");
+                    throw new RuntimeException("Employee is not registered");
                 }
 
                 if (employee.getEmployerId() == null) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employer not found for requested employee");
+                    throw new RuntimeException("Employer not found for requested employee");
                 }
 
                 long employeeId = employee.getId();
@@ -89,6 +89,7 @@ public class SeatReservationsService {
 
             }
         } catch (Exception e) {
+            throw new RuntimeException("Error converting seat reservation: " + e.getMessage(), e);
 
         }
         return reservations;
