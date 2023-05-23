@@ -1,22 +1,34 @@
 package sjsu.cmpe275.controller;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import sjsu.cmpe275.entity.BulkEmployee;
 import sjsu.cmpe275.entity.Employee;
 import sjsu.cmpe275.entity.EmployeeId;
 import sjsu.cmpe275.entity.Employer;
+import sjsu.cmpe275.repository.EmployeeRepository;
+import sjsu.cmpe275.repository.EmployerRepository;
 import sjsu.cmpe275.service.EmployeeService;
 import sjsu.cmpe275.service.EmployerService;
 import sjsu.cmpe275.service.ErrorResponse;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/employer")
 public class EmployerController {
 
@@ -25,6 +37,8 @@ public class EmployerController {
 
     @Autowired
     private EmployeeService employeeService;
+
+
 
     /**
      * Creates a new employer and returns the corresponding HTTP response with the employer information.
@@ -271,4 +285,7 @@ public class EmployerController {
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
     }
+
+
+
 }
