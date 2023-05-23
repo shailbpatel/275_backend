@@ -1,5 +1,9 @@
 package sjsu.cmpe275.service;
 
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,11 +17,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-//@Transactional
+@Transactional
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -86,6 +92,53 @@ public class EmployeeService {
 
         Employee savedEmployee = employeeRepository.save(employee);
         return savedEmployee;
+    }
+
+    //Bulk Reservation
+    private static final CsvMapper mapper = new CsvMapper();
+    public static <T> List<T> read(InputStream stream, Class<T> clazz) throws IOException {
+        CsvSchema schema = CsvSchema.builder()
+                .addColumn("employeeEmailId")
+                .addColumn("employeeName")
+                .addColumn("password")
+                .addColumn("managerEmailId")
+                .build();
+        ObjectReader reader = mapper.readerFor(clazz).with(schema);
+        MappingIterator<T> iterator = reader.readValues(stream);
+        return iterator.readAll();
+    }
+
+    public List<Employee> convertToEmployees(List<BulkEmployee> bulkEmployees) {
+        List<Employee> employees = new ArrayList<>();
+
+        try{
+            for (BulkEmployee bulkEmployee : bulkEmployees) {
+
+                //TODO: Make employerId dynamic
+                String employerId = "SJSU";
+
+                Employer employer = employerRepository.findById(employerId);
+                if (employer == null) {
+                    throw new RuntimeException("Employer object does not exist!");
+                }
+                Employee Manager = null;
+                if(!bulkEmployee.getManagerEmailId().isEmpty()){
+
+                    Manager = employeeRepository.findByEmployerIdAndEmail(employerId, bulkEmployee.getManagerEmailId());
+                    if (Manager == null) {
+                        throw new RuntimeException("Manager does not exist!");
+                    }
+                }
+                long id = generateEmployeeId(employerId);
+                Employee employee = new Employee(id, employerId, bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, employer, Manager, false);
+                employeeRepository.save(employee);
+                employees.add(employee);
+
+            }
+        }catch (Exception e) {
+            throw new RuntimeException("Error converting seat reservation: " + e.getMessage(), e);
+        }
+        return employees;
     }
 
     /**

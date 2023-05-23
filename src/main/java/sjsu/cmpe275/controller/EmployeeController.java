@@ -100,8 +100,8 @@ public class EmployeeController {
 
         String content = new String(file.getBytes());
 
-        List<BulkEmployee> bulkEmployees = this.read(file.getInputStream(),BulkEmployee.class);
-        List<Employee> employees = convertToEmployees(bulkEmployees);
+        List<BulkEmployee> bulkEmployees = employeeService.read(file.getInputStream(),BulkEmployee.class);
+        List<Employee> employees = employeeService.convertToEmployees(bulkEmployees);
 
 
         System.out.println(bulkEmployees.toString());
@@ -112,44 +112,7 @@ public class EmployeeController {
         }
     }
 
-    private static final CsvMapper mapper = new CsvMapper();
-    public static <T> List<T> read(InputStream stream, Class<T> clazz) throws IOException {
-        CsvSchema schema = CsvSchema.builder()
-                .addColumn("employeeEmailId")
-                .addColumn("employeeName")
-                .addColumn("password")
-                .addColumn("managerEmailId")
-                .build();
-        ObjectReader reader = mapper.readerFor(clazz).with(schema);
-        MappingIterator<T> iterator = reader.readValues(stream);
-        return iterator.readAll();
-    }
 
-    private List<Employee> convertToEmployees(List<BulkEmployee> bulkEmployees) {
-        List<Employee> employees = new ArrayList<>();
-        for (BulkEmployee bulkEmployee : bulkEmployees) {
 
-            //TODO: Make employerId dynamic
-            String employerId = "SJSU";
 
-            Employer employer = employerRepository.findById(employerId);
-            if (employer == null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employer object does not exist!");
-            }
-            Employee Manager = null;
-            if(!bulkEmployee.getManagerEmailId().isEmpty()){
-
-                Manager = employeeRepository.findByEmployerIdAndEmail(employerId, bulkEmployee.getManagerEmailId());
-                if (Manager == null) {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Manager does not exist!");
-                }
-            }
-            long id = employeeService.generateEmployeeId(employerId);
-            Employee employee = new Employee(id, employerId, bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, employer, Manager, false);
-            employeeRepository.save(employee);
-            employees.add(employee);
-
-        }
-        return employees;
-    }
 }
