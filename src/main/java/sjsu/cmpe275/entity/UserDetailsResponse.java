@@ -8,8 +8,17 @@ public class UserDetailsResponse {
     private boolean isVerified;
     private boolean isGoogle;
     private String employerId;
+    private boolean isManager;
 
     public UserDetailsResponse() {
+    }
+
+    public boolean getis_manager() {
+        return isManager;
+    }
+
+    public void setIsManager(boolean manager) {
+        isManager = manager;
     }
 
     public String getName() {
