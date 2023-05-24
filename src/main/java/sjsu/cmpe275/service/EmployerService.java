@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sjsu.cmpe275.entity.Address;
 import sjsu.cmpe275.entity.Employee;
 import sjsu.cmpe275.entity.Employer;
+import sjsu.cmpe275.entity.User;
 import sjsu.cmpe275.repository.EmployeeRepository;
 import sjsu.cmpe275.repository.EmployerRepository;
 
@@ -22,8 +23,12 @@ public class EmployerService {
 
     @Autowired
     private EntityManager entityManager;
+
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @Transactional
@@ -35,6 +40,8 @@ public class EmployerService {
         Employer employer = new Employer(id, name, address, email, password, seats, is_google, false);
         Employer savedEmployer = employerRepository.save(employer);
         entityManager.flush();
+        User user = savedEmployer;
+        emailService.sendVerificationEmail(user);
         return savedEmployer;
     }
 

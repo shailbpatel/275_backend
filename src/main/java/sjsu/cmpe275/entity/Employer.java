@@ -1,13 +1,16 @@
 package sjsu.cmpe275.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Entity
 @Table(name = "employer")
-public class Employer {
+public class Employer implements User<String> {
     @Id
     @Column(name = "id")
     private String id;
@@ -36,6 +39,12 @@ public class Employer {
     @Column(name = "is_verified")
     private boolean isVerified;
 
+    @Column(name = "token")
+    private String token;
+
+    @Column(name = "mop")
+    private int mop;
+
     public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified) {
         this.id = id;
         this.name = name;
@@ -45,12 +54,27 @@ public class Employer {
         this.seats = seats;
         this.isGoogle = is_google;
         this.isVerified = is_verified;
+        this.token = UUID.randomUUID().toString();
+    }
+
+    public Employer(String id, String name, Address address, String email, String password, int seats, boolean is_google, boolean is_verified, int mop) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.email = email;
+        this.password = password;
+        this.seats = seats;
+        this.isGoogle = is_google;
+        this.isVerified = is_verified;
+        this.token = UUID.randomUUID().toString();
+        this.mop = mop;
     }
 
     public Employer() {
 
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -114,4 +138,22 @@ public class Employer {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    @Override
+    public int getMop() {
+        return mop;
+    }
+
+    @Override
+    public void setMop(int mop) {
+        this.mop = mop;
+    }
+
+    @Override
+    @JsonIgnore
+    public Employer getEmployer() {return this;}
 }

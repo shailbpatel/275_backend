@@ -2,19 +2,13 @@ package sjsu.cmpe275.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import java.util.UUID;
 
 
 @Entity
 @Table(name = "employee")
 @IdClass(EmployeeId.class)
-public class Employee {
+public class Employee implements User<Long> {
 
     @Id
     @Column(name = "id")
@@ -61,6 +55,12 @@ public class Employee {
     @Column(name = "is_verified")
     private boolean isVerified;
 
+    @Column(name = "token")
+    private String token;
+
+    @Column(name = "mop")
+    private int mop;
+
     public Employee() {
     }
 
@@ -76,6 +76,23 @@ public class Employee {
         this.setManager(manager);
         this.isVerified = false;
         this.isGoogle = isGoogle;
+        this.token = UUID.randomUUID().toString();
+    }
+
+    public Employee(long id, String employerId, String name, String email, String password, String title, Address address, Employer employer, Employee manager, boolean isGoogle, int mop) {
+        this.id = id;
+        this.employerId = employerId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.title = title;
+        this.address = address;
+        this.employer = employer;
+        this.setManager(manager);
+        this.isVerified = false;
+        this.isGoogle = isGoogle;
+        this.token = UUID.randomUUID().toString();
+        this.mop = mop;
     }
 
     public void setManager(Employee manager) {
@@ -94,6 +111,16 @@ public class Employee {
             this.manager_id = null;
             this.manager_employer_id = null;
         }
+    }
+
+    @Override
+    public int getMop() {
+        return mop;
+    }
+
+    @Override
+    public void setMop(int mop) {
+        this.mop = mop;
     }
 
     public String getManagerEmployerId() {
@@ -116,8 +143,9 @@ public class Employee {
         return employerId;
     }
 
-    public long getId() {
-        return id;
+    @Override
+    public Long getId() {
+        return Long.valueOf(id);
     }
 
     public void setId(long id) {
@@ -188,4 +216,6 @@ public class Employee {
     public void setGoogle(boolean google) {
         isGoogle = google;
     }
+
+    public String getToken() {return token;}
 }

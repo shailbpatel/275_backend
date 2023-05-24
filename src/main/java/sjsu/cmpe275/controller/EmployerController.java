@@ -13,10 +13,10 @@ import sjsu.cmpe275.entity.Employer;
 import sjsu.cmpe275.service.EmployeeService;
 import sjsu.cmpe275.service.EmployerService;
 import sjsu.cmpe275.service.ErrorResponse;
-
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/employer")
 public class EmployerController {
 
@@ -25,6 +25,8 @@ public class EmployerController {
 
     @Autowired
     private EmployeeService employeeService;
+
+
 
     /**
      * Creates a new employer and returns the corresponding HTTP response with the employer information.
@@ -39,7 +41,7 @@ public class EmployerController {
      * @throws ResponseStatusException if there was an error creating the employer
      */
 
-    @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> createEmployer(
             @RequestParam(required = false) String tokenId,
             @RequestParam(required = true) String id,
@@ -55,20 +57,11 @@ public class EmployerController {
             @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
 
         Employer newEmployer = employerService.createEmployer(id, name, street, city, state, zip, email, password, seats, is_google);
-
         if (newEmployer == null) {
             ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Employer already exists.");
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
-
-        if ("json".equalsIgnoreCase(format)) {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(newEmployer);
-        } else if ("xml".equalsIgnoreCase(format)) {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(newEmployer);
-        } else {
-            ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Something went wrong");
-            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
-        }
+        return ResponseEntity.ok().body(newEmployer);
     }
 
     @GetMapping("/{employerId}/employees")
@@ -76,18 +69,14 @@ public class EmployerController {
         return employeeService.getAllEmployeesByEmployerId(employerId);
     }
 
-    @GetMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getAllEmployers(@RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
         List<Employer> employers = employerService.getAllEmployers();
         if (employers.isEmpty()) {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "No employers found.");
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
-        if (format.equals("xml")) {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employers);
-        } else {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(employers);
-        }
+        return ResponseEntity.ok().body(employers);
     }
 
     /**
@@ -98,7 +87,7 @@ public class EmployerController {
      * @return a ResponseEntity containing the requested employer in either JSON or XML format, along with an HTTP status code of 200 (OK)
      * @throws ResponseStatusException if the employer with the given ID could not be found
      */
-    @GetMapping(value = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getEmployer(@PathVariable(required = false) String employerId, @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
 
         Employer employer = employerService.getEmployer(employerId);
@@ -106,11 +95,7 @@ public class EmployerController {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Employer not found.");
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
-        if (format.equals("xml")) {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employer);
-        } else {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(employer);
-        }
+        return ResponseEntity.ok().body(employer);
     }
 
     /**
@@ -126,7 +111,7 @@ public class EmployerController {
      * @return a ResponseEntity containing the updated employer in JSON or XML format, or an error status if the employer
      * does not exist or if there is a bad request
      */
-    @PutMapping(path = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PutMapping(path = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> updateEmployer(
                                         @PathVariable("employerId") String employerId,
                                         @RequestParam(required = true) String name,
@@ -138,11 +123,9 @@ public class EmployerController {
 
         try {
             Employer employer = employerService.updateEmployer(employerId, name, street, city, state, zip);
-            if (format != null && format.equals("xml")) {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employer);
-            } else {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(employer);
-            }
+
+            return ResponseEntity.ok().body(employer);
+
         } catch (Exception e) {
             if (e.getMessage() == "Employer does not exist!") {
                 ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Employer not found.");
@@ -163,7 +146,7 @@ public class EmployerController {
      */
 
 
-    @DeleteMapping(value = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @DeleteMapping(value = "/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> deleteEmployer(@PathVariable("employerId") String employerId, @RequestParam(required = false) String format) throws Exception {
         Employer deletedEmployer = employerService.deleteEmployer(employerId);
 
@@ -171,11 +154,8 @@ public class EmployerController {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Employer not found.");
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
-        if (format != null && format.equals("xml")) {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(deletedEmployer);
-        } else {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(deletedEmployer);
-        }
+        return ResponseEntity.ok().body(deletedEmployer);
+
     }
 
 
@@ -189,7 +169,7 @@ public class EmployerController {
      * @throws ResponseStatusException if no Employee with the specified ID exists or if there is an error retrieving the Employee
      */
 
-    @GetMapping(value = "/{employerId}/employee/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/{employerId}/employee/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getEmployee(@PathVariable String employerId, @PathVariable Long id, @RequestParam(value = "format", defaultValue = "json") String format) throws ResponseStatusException {
         EmployeeId employeeId = new EmployeeId(id, employerId);
         Employee employee = employeeService.getEmployee(employeeId);
@@ -197,11 +177,7 @@ public class EmployerController {
             ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Employee not found.");
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
-        if (format.equals("xml")) {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employee);
-        } else {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(employee);
-        }
+        return ResponseEntity.ok().body(employee);
     }
 
     /**
@@ -221,7 +197,7 @@ public class EmployerController {
      * @return a ResponseEntity containing the updated employee in the requested format
      * @throws ResponseStatusException if the employee or employer ID is invalid
      */
-    @PutMapping(path = "/{employerId}/employee/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PutMapping(path = "/{employerId}/employee/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> updateEmployee(@PathVariable("employerId") String employerId,
                                                    @PathVariable("id") long id,
                                                    @RequestParam(required = true) String name,
@@ -236,11 +212,9 @@ public class EmployerController {
         try {
             Employee employee = employeeService.updateEmployee(new EmployeeId(id, employerId), name, email, title, street, city, state, zip, managerId);
 
-            if (format != null && format.equals("xml")) {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(employee);
-            } else {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(employee);
-            }
+
+            return ResponseEntity.ok().body(employee);
+
         } catch (ResponseStatusException ex) {
             ErrorResponse response = new ErrorResponse(ex.getStatus().value(), ex.getReason());
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
@@ -257,18 +231,19 @@ public class EmployerController {
      * @throws ResponseStatusException if the employer or employee with the given IDs cannot be found in the database
      */
     @Transactional
-    @DeleteMapping(value = "/{employerId}/employee/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @DeleteMapping(value = "/{employerId}/employee/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> deleteEmployee(@PathVariable("employerId") String employerId, @PathVariable("id") Long id, @RequestParam(required = false) String format) throws ResponseStatusException {
         try {
             Employee deletedEmployee = employeeService.deleteEmployee(id, employerId);
-            if (format != null && format.equals("xml")) {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(deletedEmployee);
-            } else {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(deletedEmployee);
-            }
+
+            return ResponseEntity.ok().body(deletedEmployee);
+
         } catch (ResponseStatusException ex) {
             ErrorResponse response = new ErrorResponse(ex.getStatus().value(), ex.getReason());
             return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
         }
     }
+
+
+
 }
