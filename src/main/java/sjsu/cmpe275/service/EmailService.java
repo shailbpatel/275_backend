@@ -26,7 +26,7 @@ public class EmailService {
             mimeMessage.setFrom(new InternetAddress("shailp52@gmail.com"));
             mimeMessage.setSubject("WIORS Account Verification");
             mimeMessage.setText("Dear " + user.getName() + ",\n\nClick on this link to verify your account: \n"
-                    + "http://52.23.102.141:8080/verify/" + user.getToken());
+                    + "http://www.woirs-cmpe275.com:8080/verify/" + user.getToken());
         };
         try {
             mailSender.send(messagePreparator);
