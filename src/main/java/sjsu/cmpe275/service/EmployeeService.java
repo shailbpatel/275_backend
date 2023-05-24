@@ -120,6 +120,7 @@ public class EmployeeService {
 
         try{
             for (BulkEmployee bulkEmployee : bulkEmployees) {
+                User user;
                 Employer employer = employerRepository.findById(employerId);
                 if (employer == null) {
                     throw new RuntimeException("Employer object does not exist!");
@@ -131,8 +132,11 @@ public class EmployeeService {
                     if (Manager == null) {
                         throw new RuntimeException("Manager does not exist!");
                     }
+                    user = createEmployee(bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, null, null, null, Manager.getId(), employerId, false);
                 }
-                User user = createEmployee(bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, null, null, null, Manager.getId(), employerId, false);
+                else {
+                    user = createEmployee(bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, null, null, null, null, employerId, false);
+                }
                 employees.add((Employee) user);
 
             }
