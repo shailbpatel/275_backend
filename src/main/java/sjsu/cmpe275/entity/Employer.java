@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
+import sjsu.cmpe275.entity.Address;
 
 @Entity
 @Table(name = "employer")
