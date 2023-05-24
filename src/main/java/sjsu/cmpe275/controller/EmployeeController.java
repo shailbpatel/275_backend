@@ -39,7 +39,7 @@ public class EmployeeController {
      * @return a ResponseEntity with the created employee in JSON or XML format, depending on the value of the "format" parameter
      * @throws ResponseStatusException if there is an error while creating the employee
      */
-    @PostMapping(value = "/create/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = "/create/{employerId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> createEmployee(
             @RequestParam(value = "tokenId", required = false) String tokenId,
             @RequestParam(value = "is_google", required = false) boolean isGoogle,

@@ -8,7 +8,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "employee")
 @IdClass(EmployeeId.class)
-public class Employee implements User {
+public class Employee implements User<Long> {
 
     @Id
     @Column(name = "id")
@@ -113,6 +113,16 @@ public class Employee implements User {
         }
     }
 
+    @Override
+    public int getMop() {
+        return mop;
+    }
+
+    @Override
+    public void setMop(int mop) {
+        this.mop = mop;
+    }
+
     public String getManagerEmployerId() {
         return manager_employer_id;
     }
@@ -133,8 +143,9 @@ public class Employee implements User {
         return employerId;
     }
 
-    public long getId() {
-        return id;
+    @Override
+    public Long getId() {
+        return Long.valueOf(id);
     }
 
     public void setId(long id) {

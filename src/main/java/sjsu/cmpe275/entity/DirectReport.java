@@ -5,7 +5,6 @@ import javax.persistence.*;
 @Entity
 @Table(name= "directReport")
 @IdClass(ManagerReportID.class)
-
 public class DirectReport {
 
     @Id
@@ -14,11 +13,19 @@ public class DirectReport {
 
     @Id
     @Column(name = "managerId")
-    private Long managerId;
+    private long managerId;
 
     @Id
     @Column(name = "reportId")
-    private Long reportId;
+    private long reportId;
+
+    public DirectReport() {}
+
+    public DirectReport(String employerId, long managerId, long reportId) {
+        this.employerId = employerId;
+        this.managerId = managerId;
+        this.reportId = reportId;
+    }
 
     public String getEmployerId() {
         return employerId;
@@ -28,19 +35,19 @@ public class DirectReport {
         this.employerId = employerId;
     }
 
-    public Long getManagerId() {
+    public long getManagerId() {
         return managerId;
     }
 
-    public void setManagerId(Long managerId) {
+    public void setManagerId(long managerId) {
         this.managerId = managerId;
     }
 
-    public Long getReportId() {
+    public long getReportId() {
         return reportId;
     }
 
-    public void setReportId(Long reportId) {
+    public void setReportId(long reportId) {
         this.reportId = reportId;
     }
 }

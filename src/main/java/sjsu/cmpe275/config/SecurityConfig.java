@@ -29,7 +29,7 @@ public class SecurityConfig {
         return http
                 .cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/mop/**").authenticated()
+//                .antMatchers("/mop/**").authenticated()
                 .anyRequest().permitAll()
                 .and().build();
     }

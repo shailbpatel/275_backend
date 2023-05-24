@@ -49,7 +49,6 @@ public class LoginController {
                 (employeeUser!=null && userLoginRequest.getIsGoogle()!=employeeUser.isGoogle())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Use password for singing in");
         }
-        
         if (!userLoginRequest.getIsGoogle()) {
             if((employerUser!=null && userLoginRequest.getPassword()!=null && employerUser.isIsGoogle()) ||
                 (employeeUser!=null && userLoginRequest.getPassword()!=null && employeeUser.isGoogle())) {
@@ -60,9 +59,9 @@ public class LoginController {
                 (employeeUser == null || !employeeUser.getPassword().equals(userLoginRequest.getPassword()))) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect email or password");
             }
-            if((employerUser != null && !employerUser.isIsVerified()) || (employeeUser != null && !employeeUser.isVerified())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not verified. Please verify using email");
-            }
+        }
+        if((employerUser != null && !employerUser.isIsVerified()) || (employeeUser != null && !employeeUser.isVerified())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not verified. Please verify using email");
         }
         // if authentication is successful, create a new session
         HttpSession session = request.getSession(true);

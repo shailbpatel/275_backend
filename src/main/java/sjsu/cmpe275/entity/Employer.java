@@ -1,5 +1,7 @@
 package sjsu.cmpe275.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -8,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "employer")
-public class Employer implements User {
+public class Employer implements User<String> {
     @Id
     @Column(name = "id")
     private String id;
@@ -72,6 +74,7 @@ public class Employer implements User {
 
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -139,4 +142,18 @@ public class Employer implements User {
     public String getToken() {
         return token;
     }
+
+    @Override
+    public int getMop() {
+        return mop;
+    }
+
+    @Override
+    public void setMop(int mop) {
+        this.mop = mop;
+    }
+
+    @Override
+    @JsonIgnore
+    public Employer getEmployer() {return this;}
 }

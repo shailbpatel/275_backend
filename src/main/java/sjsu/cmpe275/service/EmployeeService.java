@@ -27,10 +27,10 @@ import java.util.List;
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
-
     @Autowired
     private EmployerRepository employerRepository;
-
+    @Autowired
+    private DirectReportRepository directReportRepository;
     @Autowired
     private EntityManager entityManager;
 
@@ -68,7 +68,6 @@ public class EmployeeService {
      * @return the newly created Employee
      * @throws ResponseStatusException if the Employer object does not exist or the Manager does not exist
      */
-
     public Employee createEmployee(String name, String email, String password, String title, String street, String city, String state, String zip, Long managerId, String employerId, boolean isGoogle) {
         Employer optionalEmployer = employerRepository.findById(employerId);
         if (optionalEmployer == null) {
@@ -91,6 +90,9 @@ public class EmployeeService {
 
         if (Manager != null) {
             employee.setManager(Manager);
+            DirectReport managerMapping = new DirectReport(employerId, Manager.getId(), employee.getId());
+            directReportRepository.save(managerMapping);
+            employee.setMop(Math.max(optionalEmployer.getMop(), Manager.getMop()));
         }
 
         Employee savedEmployee = employeeRepository.save(employee);
@@ -130,12 +132,8 @@ public class EmployeeService {
                         throw new RuntimeException("Manager does not exist!");
                     }
                 }
-                long id = generateEmployeeId(employerId);
-                Employee employee = new Employee(id, employerId, bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, employer, Manager, false);
-                employeeRepository.save(employee);
-                User user = employee;
-                emailService.sendVerificationEmail(user);
-                employees.add(employee);
+                User user = createEmployee(bulkEmployee.getEmployeeName(), bulkEmployee.getEmployeeEmailId(), bulkEmployee.getPassword(), null, null, null, null, null, Manager.getId(), employerId, false);
+                employees.add((Employee) user);
 
             }
         }catch (Exception e) {
