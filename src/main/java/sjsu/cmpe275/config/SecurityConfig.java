@@ -15,7 +15,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://52.23.102.141:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://www.woirs-cmpe275.com", "http://www.woirs-cmpe275.com:3000", "http://52.23.102.141", "http://52.23.102.141:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
