@@ -76,6 +76,7 @@ public class MOPController {
         }
         if(userObj == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
         if(requestBody.getRole().equals("Employee")) {
+            if(requestBody.getMop() < userObj.getEmployer().getMop()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New MOP cannot be less than Employers");
             DirectReport immediateManagerMapping = directReportRepository.findByEmployerIdAndReportId(requestBody.getEmployerId(), (long) userObj.getId());
             if(immediateManagerMapping != null) {
                 Employee immediateManager = employeeRepository.findByIdAndEmployerId(immediateManagerMapping.getManagerId(), immediateManagerMapping.getEmployerId());
