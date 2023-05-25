@@ -10,6 +10,17 @@ public class UserDetailsResponse {
     private String employerId;
     private boolean isManager;
 
+    public long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    private long employeeId;
+
+
     public UserDetailsResponse() {
     }
 

@@ -9,12 +9,11 @@ public class SeatReservations {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name ="reservationId", nullable = false)
+    @Column(name = "reservationId", nullable = false)
     private int reservationId;
 
     @Column(name = "employerId")
     private String employerId;
-
 
 
     public String getStartDate() {
@@ -47,8 +46,10 @@ public class SeatReservations {
 
     @Column(name = "isGTD")
     private boolean isGTD;
+
     public SeatReservations(String employerId, Long employeeId, String startDate, String endDate, boolean isPreemptable, boolean isGTD) {
     }
+
     public SeatReservations(int reservationId, String employerId, long employeeId, String startDate, String endDate, boolean isPreemptable, boolean isGTD) {
         this.reservationId = reservationId;
         this.employerId = employerId;
