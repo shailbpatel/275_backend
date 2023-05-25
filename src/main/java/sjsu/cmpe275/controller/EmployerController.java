@@ -26,8 +26,6 @@ public class EmployerController {
     @Autowired
     private EmployeeService employeeService;
 
-
-
     /**
      * Creates a new employer and returns the corresponding HTTP response with the employer information.
      *
@@ -40,7 +38,6 @@ public class EmployerController {
      * @return an HTTP response with the newly created employer information in the specified format
      * @throws ResponseStatusException if there was an error creating the employer
      */
-
     @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> createEmployer(
             @RequestParam(required = false) String tokenId,
@@ -244,6 +241,10 @@ public class EmployerController {
         }
     }
 
-
-
+    @PostMapping(value="/{employerId}/capacity/{newCapacity}")
+    public ResponseEntity<?> changeCapacity(@PathVariable String employerId, @PathVariable int newCapacity) {
+        boolean result = employerService.changeCapacity(employerId, newCapacity);
+        if(result) return ResponseEntity.ok().body("Seating capacity updated");
+        else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating capacity!");
+    }
 }

@@ -31,6 +31,15 @@ public class EmployerService {
     private EmailService emailService;
 
 
+    public boolean changeCapacity(String employerId, int newCapacity) {
+        Employer employer = employerRepository.findById(employerId);
+        if (employer == null) return false;
+        if(employer.getSeats() > newCapacity) return false;
+        employer.setSeats(newCapacity);
+        employerRepository.save(employer);
+        return true;
+    }
+
     @Transactional
     public Employer createEmployer(String id, String name, String street, String city, String state, String zip, String email, String password, Integer seats, Boolean is_google) {
         if (employerRepository.findById(id) != null) {
