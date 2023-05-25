@@ -16,4 +16,6 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
     Employee findByEmail(String email);
 
     Employee findByToken(String token);
+
+
 }

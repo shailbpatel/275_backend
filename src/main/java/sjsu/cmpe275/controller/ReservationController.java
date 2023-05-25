@@ -1,7 +1,6 @@
 package sjsu.cmpe275.controller;
 
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,15 +10,17 @@ import sjsu.cmpe275.entity.*;
 import sjsu.cmpe275.repository.EmployeeRepository;
 import sjsu.cmpe275.repository.SeatReservationsRepository;
 import sjsu.cmpe275.service.SeatReservationsService;
+
 import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("")
 public class ReservationController {
 
     @Autowired
-    private  SeatReservationsRepository seatReservationsRepository;
+    private SeatReservationsRepository seatReservationsRepository;
 
     @Autowired
     private final SeatReservationsService seatReservationService;
@@ -47,20 +48,23 @@ public class ReservationController {
 
 
     //Bulk Seat Reservation
-    @PostMapping(value="/bulk/reservation")
+    @PostMapping(value = "/bulk/reservation")
     public ResponseEntity<String> bulkReservations(@RequestParam("csvFile") MultipartFile file) throws IOException {
 
-        if(!file.isEmpty()) {
-            System.out.println("filed received");
-        }
-
-        List<BulkReservations> bulkReservations = seatReservationService.read(file.getInputStream(),BulkReservations.class);
-        List<SeatReservations> reservations = seatReservationService.convertToSeatReservations(bulkReservations);
-
         try {
+
+            if (!file.isEmpty()) {
+                System.out.println("filed received");
+            }
+
+            List<BulkReservations> bulkReservations = seatReservationService.read(file.getInputStream(), BulkReservations.class);
+            List<SeatReservations> reservations = seatReservationService.convertToSeatReservations(bulkReservations);
+
             return ResponseEntity.status(HttpStatus.OK).body(new String("Sucess"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new String("Failed"));
         }
     }
+
+
 }
