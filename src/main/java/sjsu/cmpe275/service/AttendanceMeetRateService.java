@@ -37,35 +37,39 @@ public class AttendanceMeetRateService {
 
     //Getting reservation counts
     public int getAllReservationDatesCounts(String startDate, String endDate) {
-        if (startDate != null && endDate != null) {}
+        if (startDate != null && endDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            LocalDate startDateLocal = LocalDate.parse(startDate, formatter);
+            LocalDate endDateLocal = LocalDate.parse(endDate, formatter);
 
-            List<SeatReservations> seatReservations = (List<SeatReservations>) seatReservationsRepository.findAll();
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            LocalDate receivedStartDate = LocalDate.parse(startDate, dateFormatter);
-            LocalDate receivedEndDate = LocalDate.parse(endDate, dateFormatter);
-
-
-            List<SeatReservations> reservationsWithInWeek = new ArrayList<>();
-
-
-            for (SeatReservations seatReservation : seatReservations) {
-
-                Employee employee = employeeRepository.findByIdAndEmployerId(seatReservation.getEmployeeId(), seatReservation.getEmployerId());
-
-                LocalDate currentStartDate = LocalDate.parse(seatReservation.getStartDate(), dateFormatter);
-                LocalDate currentEndDate = LocalDate.parse(seatReservation.getEndDate(), dateFormatter);
-
-                if ( (currentStartDate.isEqual(receivedStartDate) || currentStartDate.isAfter(receivedStartDate)) &&
-                        (currentStartDate.isEqual(receivedEndDate) || currentStartDate.isBefore(receivedEndDate)) &&
-                        (currentEndDate.isEqual(receivedStartDate) || currentEndDate.isAfter(receivedStartDate)) &&
-                        (currentEndDate.isEqual(receivedEndDate) || currentEndDate.isBefore(receivedEndDate))) {
-
-                    reservationsWithInWeek.add(seatReservation);
-
-                }
-            }
-
-            return reservationsWithInWeek.size();
+//        List<SeatReservations> seatReservations = (List<SeatReservations>) seatReservationsRepository.findAll();
+//        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+//        LocalDate receivedStartDate = LocalDate.parse(startDate, dateFormatter);
+//            LocalDate receivedEndDate = LocalDate.parse(endDate, dateFormatter);
+//
+//
+//            List<SeatReservations> reservationsWithInWeek = new ArrayList<>();
+//
+//
+//            for (SeatReservations seatReservation : seatReservations) {
+//
+//                Employee employee = employeeRepository.findByIdAndEmployerId(seatReservation.getEmployeeId(), seatReservation.getEmployerId());
+//
+//                LocalDate currentStartDate = LocalDate.parse(seatReservation.getStartDate(), dateFormatter);
+//                LocalDate currentEndDate = LocalDate.parse(seatReservation.getEndDate(), dateFormatter);
+//
+//                if ( (currentStartDate.isEqual(receivedStartDate) || currentStartDate.isAfter(receivedStartDate)) &&
+//                        (currentStartDate.isEqual(receivedEndDate) || currentStartDate.isBefore(receivedEndDate)) &&
+//                        (currentEndDate.isEqual(receivedStartDate) || currentEndDate.isAfter(receivedStartDate)) &&
+//                        (currentEndDate.isEqual(receivedEndDate) || currentEndDate.isBefore(receivedEndDate))) {
+//
+//                    reservationsWithInWeek.add(seatReservation);
+//
+//                }
+//            }
+//
+//            return reservationsWithInWeek.size();
         }
-
+        return 0;
+    }
 }

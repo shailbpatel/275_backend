@@ -15,31 +15,11 @@ public class SeatReservations {
     @Column(name = "employerId")
     private String employerId;
 
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
     @Column(name = "employeeId")
     private long employeeId;
 
-    @Column(name = "startDate")
-    private String startDate;
-
-    @Column(name = "endDate")
-    private String endDate;
+    @Column(name = "reservationDate")
+    private String reservationDate;
 
     @Column(name = "isPreemptable")
     private boolean isPreemptable;
@@ -47,45 +27,15 @@ public class SeatReservations {
     @Column(name = "isGTD")
     private boolean isGTD;
 
-    public SeatReservations(String employerId, Long employeeId, String startDate, String endDate, boolean isPreemptable, boolean isGTD) {
-    }
-
-    public SeatReservations(int reservationId, String employerId, long employeeId, String startDate, String endDate, boolean isPreemptable, boolean isGTD) {
-        this.reservationId = reservationId;
+    public SeatReservations(String employerId, long employeeId, String reservationDate, boolean isGTD, boolean isPreemptable) {
         this.employerId = employerId;
         this.employeeId = employeeId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.reservationDate = reservationDate;
         this.isPreemptable = isPreemptable;
         this.isGTD = isGTD;
     }
 
     public SeatReservations() {
-
-    }
-
-    public boolean isPreemptable() {
-        return isPreemptable;
-    }
-
-    public void setPreemptable(boolean preemptable) {
-        isPreemptable = preemptable;
-    }
-
-    public boolean isGTD() {
-        return isGTD;
-    }
-
-    public void setGTD(boolean GTD) {
-        isGTD = GTD;
-    }
-
-    public long getReservationId() {
-        return reservationId;
-    }
-
-    public void setReservationId(int reservationId) {
-        this.reservationId = reservationId;
     }
 
     public String getEmployerId() {
@@ -104,5 +54,27 @@ public class SeatReservations {
         this.employeeId = employeeId;
     }
 
+    public String getReservationDate() {
+        return reservationDate;
+    }
 
+    public void setReservationDate(String reservationDate) {
+        this.reservationDate = reservationDate;
+    }
+
+    public boolean isPreemptable() {
+        return isPreemptable;
+    }
+
+    public void setPreemptable(boolean preemptable) {
+        isPreemptable = preemptable;
+    }
+
+    public boolean isGTD() {
+        return isGTD;
+    }
+
+    public void setGTD(boolean GTD) {
+        isGTD = GTD;
+    }
 }
