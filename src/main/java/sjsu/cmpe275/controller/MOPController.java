@@ -55,8 +55,15 @@ public class MOPController {
 
     @GetMapping("")
     public ResponseEntity<?> getMOP(@RequestParam String employerId, @RequestParam String email) {
-        Employee empObj = employeeRepository.findByEmployerIdAndEmail(employerId, email);
-        return ResponseEntity.status(HttpStatus.OK).body(empObj.getMop());
+        User user;
+        if(!email.equals("")) {
+            user = employeeRepository.findByEmployerIdAndEmail(employerId, email);
+        }
+        else {
+            user = employerRepository.findById(employerId);
+        }
+        if(user != null)  return ResponseEntity.status(HttpStatus.OK).body(user.getMop());
+        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
     }
 
     @PostMapping("")
@@ -70,8 +77,11 @@ public class MOPController {
         if(userObj == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
         if(requestBody.getRole().equals("Employee")) {
             DirectReport immediateManagerMapping = directReportRepository.findByEmployerIdAndReportId(requestBody.getEmployerId(), (long) userObj.getId());
-            Employee immediateManager = employeeRepository.findByIdAndEmployerId(immediateManagerMapping.getManagerId(), immediateManagerMapping.getEmployerId());
-            userObj.setMop(Math.max(immediateManager.getMop(), Math.max(requestBody.getMop(), userObj.getEmployer().getMop())));
+            if(immediateManagerMapping != null) {
+                Employee immediateManager = employeeRepository.findByIdAndEmployerId(immediateManagerMapping.getManagerId(), immediateManagerMapping.getEmployerId());
+                userObj.setMop(Math.max(immediateManager.getMop(), Math.max(requestBody.getMop(), userObj.getEmployer().getMop())));
+            }
+            else userObj.setMop(Math.max(requestBody.getMop(), userObj.getEmployer().getMop()));
         }
         else {
             userObj.setMop(requestBody.getMop());
