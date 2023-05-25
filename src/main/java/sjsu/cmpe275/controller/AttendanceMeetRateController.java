@@ -17,9 +17,6 @@ public class AttendanceMeetRateController {
     @Autowired
     private AttendanceMeetRateService attendanceMeetRateService;
 
-
-
-
     @PostMapping(value = "/reservations/dates")
     public ResponseEntity<String> dates(@RequestBody ReservationDates reservationDates) {
         try {
