@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sjsu.cmpe275.entity.*;
 import sjsu.cmpe275.repository.DirectReportRepository;
 import sjsu.cmpe275.repository.EmployeeRepository;
@@ -20,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/")
 public class LoginController {
     @Autowired
@@ -86,6 +84,7 @@ public class LoginController {
             userDetailsResponse.setIsVerified(employeeUser.isVerified());
             userDetailsResponse.setIsGoogle(employeeUser.isGoogle());
             userDetailsResponse.setEmployerId(employeeUser.getEmployer().getId());
+            userDetailsResponse.setEmployeeId(employeeUser.getId());
 
             List<DirectReport> managerMapping = directReportRepository.findByEmployerIdAndManagerId(employeeUser.getEmployerId(), employeeUser.getId());
             if(managerMapping.size() > 0) {

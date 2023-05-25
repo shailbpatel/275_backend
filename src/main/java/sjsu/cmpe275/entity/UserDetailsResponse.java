@@ -9,6 +9,15 @@ public class UserDetailsResponse {
     private boolean isGoogle;
     private String employerId;
     private boolean isManager;
+    private long employeeId;
+
+    public void setEmployeeId(long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public long getEmployeeId() {
+        return employeeId;
+    }
 
     public UserDetailsResponse() {
     }

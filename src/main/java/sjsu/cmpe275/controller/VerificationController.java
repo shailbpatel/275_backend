@@ -10,6 +10,7 @@ import sjsu.cmpe275.repository.EmployeeRepository;
 import sjsu.cmpe275.repository.EmployerRepository;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/")
 public class VerificationController {
 
