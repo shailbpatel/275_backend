@@ -16,13 +16,12 @@ public class ManagerRequirements {
     @Column(name = "employer_id")
     private String employerId;
 
-
-    //TODO: map days to integer for both the  fields
-    @Column(name = "MOP") // [1-5] : 1-> Mon, 2-> Tue
-    private int MOP;
-
     @Column(name= "GTD") // [1-5] : 1-> Mon, 2-> Tue
     private int GTD;
+
+    public ManagerRequirements() {
+
+    }
 
     public long getId() {
         return id;
@@ -40,19 +39,17 @@ public class ManagerRequirements {
         this.employerId = employerId;
     }
 
-    public int getMOP() {
-        return MOP;
-    }
-
-    public void setMOP(int MOP) {
-        this.MOP = MOP;
-    }
-
     public int getGTD() {
         return GTD;
     }
 
     public void setGTD(int GTD) {
+        this.GTD = GTD;
+    }
+
+    public ManagerRequirements(String employerId, long id, int GTD) {
+        this.id = id;
+        this.employerId = employerId;
         this.GTD = GTD;
     }
 }
