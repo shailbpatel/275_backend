@@ -11,9 +11,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import sjsu.cmpe275.repository.EmployeeRepository;
+import sjsu.cmpe275.repository.SeatReservationsRepository;
 import sjsu.cmpe275.service.SeatReservationsService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,10 +26,37 @@ public class ReservationController {
     private final SeatReservationsService seatReservationService;
     @Autowired
     private final EmployeeRepository employeeRepository;
+    @Autowired
+    private final SeatReservationsRepository seatReservationsRepository;
 
-    public ReservationController(SeatReservationsService seatReservationService, EmployeeRepository employeeRepository) {
+    public ReservationController(SeatReservationsService seatReservationService, EmployeeRepository employeeRepository, SeatReservationsRepository seatReservationsRepository) {
         this.seatReservationService = seatReservationService;
         this.employeeRepository = employeeRepository;
+        this.seatReservationsRepository = seatReservationsRepository;
+    }
+
+    public static List<LocalDate> getNextDaysForWeeks(int numWeeks) {
+        List<LocalDate> dates = new ArrayList<>();
+        LocalDate startDate = LocalDate.now();
+
+        for(int i = 0; i < numWeeks * 7; i++) { // 7 days per week
+            dates.add(startDate.plusDays(i));
+        }
+        return dates;
+    }
+    @GetMapping("/{employerId}/{email}")
+    public ResponseEntity<?> getReservationsOfEmployee(@PathVariable String employerId, @PathVariable String employeeEmail) {
+        Employee employee = employeeRepository.findByEmployerIdAndEmail(employerId, employeeEmail);
+        if(employee == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee does not exist");
+        DateTimeFormatter frontendFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter backendFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
+        List<LocalDate> nextTenWeeks = getNextDaysForWeeks(10);
+        List<String> reservationDates = new ArrayList<>();
+        for(LocalDate date : nextTenWeeks) {
+            SeatReservations reservation = seatReservationsRepository.findByEmployeeIdAndEmployerIdAndReservationDate(employee.getId(), employerId, date.format(backendFormat));
+            if(reservation != null) reservationDates.add(LocalDate.parse(reservation.getReservationDate(), backendFormat).format(frontendFormat));
+        }
+        return (ResponseEntity<?>) reservationDates;
     }
 
     @PostMapping("/{employerId}")
